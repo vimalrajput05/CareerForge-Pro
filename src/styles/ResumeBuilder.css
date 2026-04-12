@@ -1,0 +1,185 @@
+body{
+margin:0;
+font-family:"Segoe UI",sans-serif;
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+}
+
+.container{
+padding:40px;
+display:flex;
+justify-content:center;
+}
+
+.builder{
+display:flex;
+gap:30px;
+width:100%;
+max-width:1300px;
+}
+
+.form-section{
+flex:1;
+background:white;
+padding:35px;
+border-radius:15px;
+box-shadow:0 15px 40px rgba(0,0,0,0.15);
+}
+
+.form{
+display:flex;
+flex-direction:column;
+gap:15px;
+margin-top:20px;
+}
+
+.input{
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+transition:0.3s;
+}
+
+.input:focus{
+border-color:#667eea;
+box-shadow:0 0 8px rgba(102,126,234,0.4);
+transform:scale(1.02);
+}
+
+.templates button{
+padding:8px 14px;
+border:none;
+border-radius:6px;
+background:#667eea;
+color:white;
+margin-right:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.templates button:hover{
+transform:translateY(-2px);
+}
+
+.download{
+margin-top:20px;
+padding:12px;
+border:none;
+border-radius:8px;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+font-size:15px;
+cursor:pointer;
+}
+
+.preview{
+flex:1;
+background:white;
+padding:40px;
+border-radius:15px;
+box-shadow:0 15px 40px rgba(0,0,0,0.15);
+}
+
+.preview h1{
+font-size:32px;
+margin-bottom:5px;
+}
+
+.email{
+color:#777;
+}
+
+.preview h3{
+margin-top:20px;
+border-bottom:2px solid #eee;
+padding-bottom:5px;
+}
+
+.skills{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:10px;
+}
+
+.skill-tag{
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+}
+
+.template2{
+background:#1e1e1e;
+color:white;
+}
+
+.template3{
+border-left:6px solid #667eea;
+}
+/* HEADER LAYOUT */
+
+.resume-header{
+display:flex;
+align-items:center;
+gap:20px;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+/* PROFILE PHOTO */
+
+.profile-photo{
+width:80px;
+height:80px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid white;
+}
+
+/* PHOTO UPLOAD */
+
+.photo-upload{
+margin-bottom:20px;
+}
+
+.upload-label{
+font-size:14px;
+font-weight:600;
+display:block;
+margin-bottom:8px;
+color:#333;
+}
+
+/* CUSTOM UPLOAD BOX */
+
+.upload-box{
+display:flex;
+align-items:center;
+justify-content:center;
+height:60px;
+border:2px dashed #667eea;
+border-radius:10px;
+cursor:pointer;
+background:#f5f7ff;
+color:#667eea;
+font-size:14px;
+transition:0.3s;
+position:relative;
+}
+
+/* hide default input */
+
+.upload-box input{
+display:none;
+}
+
+.upload-box:hover{
+background:#eef1ff;
+transform:scale(1.02);
+}
