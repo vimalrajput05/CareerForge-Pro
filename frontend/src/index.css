@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@media print {
+  /* Hide everything except resume */
+  body > #root > * {
+    display: none !important;
+  }
+
+  #resume-preview-print {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+}
