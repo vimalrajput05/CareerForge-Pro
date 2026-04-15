@@ -1,22 +1,7 @@
-function ResumeForm({ resumeData, setResumeData }) {
-  const handleChange = (e) => {
+function ResumeForm({ resumeData, setResumeData, handleDownloadPDF }) {
+const handleChange = (e) => {
     const { name, value } = e.target;
     setResumeData({ ...resumeData, [name]: value });
-  };
-
-  const handleDownload = () => {
-    // Add print-only style temporarily
-    const style = document.createElement('style');
-    style.id = 'print-style';
-    style.innerHTML = `
-      @media print {
-        body > * { display: none !important; }
-        #resume-preview-print { display: block !important; position: fixed; top: 0; left: 0; width: 100%; }
-      }
-    `;
-    document.head.appendChild(style);
-    window.print();
-    setTimeout(() => document.getElementById('print-style')?.remove(), 1000);
   };
 
   const inputClass = "w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-3 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:focus:ring-violet-400 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 shadow-sm text-sm";
@@ -101,11 +86,15 @@ function ResumeForm({ resumeData, setResumeData }) {
         ))}
 
         <button
-          onClick={handleDownload}
-          className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
-        >
-          📥 Download Resume as PDF
-        </button>
+  type="button"
+  onClick={() => {
+  console.log("clicked");
+  handleDownloadPDF();
+}}
+  className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
+>
+  📥 Download Resume as PDF
+</button>
       </div>
     </div>
   );

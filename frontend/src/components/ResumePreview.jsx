@@ -21,7 +21,7 @@ function ResumePreview({ resumeData }) {
   // ── TEMPLATE 2: Sidebar ──
   if (template === "template2") {
     return (
-      <div id="resume-preview-print" className="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div id="resume-preview" className="w-[794px] bg-white">
         <div className="flex flex-col md:flex-row min-h-[600px]">
           {/* Sidebar */}
           <div className="md:w-56 bg-gradient-to-b from-fuchsia-600 to-violet-700 text-white p-6 flex flex-col gap-5">
@@ -67,7 +67,7 @@ function ResumePreview({ resumeData }) {
   // ── TEMPLATE 3: Minimal Card ──
   if (template === "template3") {
     return (
-      <div id="resume-preview-print" className="bg-white rounded-2xl shadow-xl overflow-hidden">
+<div id="resume-preview" className="w-[794px] bg-white">
         {/* Top accent bar */}
         <div className="h-2 bg-gradient-to-r from-slate-700 to-slate-500" />
         <div className="p-8">
@@ -113,8 +113,7 @@ function ResumePreview({ resumeData }) {
 
   // ── TEMPLATE 1: Classic (Default) ──
   return (
-    <div id="resume-preview-print" className="bg-white rounded-2xl shadow-xl overflow-hidden">
-      {/* Header */}
+<div id="resume-preview" className="w-[794px] bg-white">      {/* Header */}
       <div className="bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white p-7">
         <div className="flex items-center gap-5">
           {profilePic && (
