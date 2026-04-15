@@ -9,8 +9,7 @@ function Home({ setCurrentPage, setShowAtsModal }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      <Navbar />
-
+<Navbar onLogin={() => setCurrentPage("login")} />
       {/* Hero Section */}
       <motion.section
         className="text-center py-20 sm:py-24 px-4 sm:px-6"

@@ -1,14 +1,11 @@
-import { useState, createContext, useContext } from "react";
+import { useState } from "react";
+import Login from"./pages/Login";
 import Home from "./pages/Home";
 import Builder from "./pages/Builder";
 import ResumeBuilder from "./pages/ResumeBuilder";
-import Dashboard from "./pages/Dashboard"; 
+import Dashboard from "./pages/Dashboard";
 
-export const DarkModeContext = createContext();
 
-export function useDarkMode() {
-  return useContext(DarkModeContext);
-}
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -58,7 +55,6 @@ function App() {
   };
 
   return (
-    <DarkModeContext.Provider value={{ isDark, toggleDark }}>
       <div className={isDark ? "dark" : ""}>
         {currentPage === "home" && (
           <Home 
@@ -94,6 +90,12 @@ function App() {
           />
         )}
 
+              {currentPage === "login" && (
+        <Login setCurrentPage={setCurrentPage} />
+      )}
+    
+
+
         {/* ATS Score Modal Overlay */}
         {showAtsModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -113,7 +115,7 @@ function App() {
           </div>
         )}
       </div>
-    </DarkModeContext.Provider>
+    
   );
 }
 
