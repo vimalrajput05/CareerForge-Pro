@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 
-function Home({ setShowWorkspace }) {
+function Home({ setCurrentPage, setShowAtsModal }) {
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-violet-50 via-pink-50 to-violet-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900 transition-all duration-1000"
@@ -47,7 +47,7 @@ function Home({ setShowWorkspace }) {
         </motion.p>
 
         <motion.button
-          onClick={() => setShowWorkspace(true)}
+          onClick={() => setCurrentPage("builder")}
           className="bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 sm:px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -74,12 +74,13 @@ function Home({ setShowWorkspace }) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {[
-            { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍" },
-            { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊" },
-            { title: "PDF Export", desc: "One-click professional PDF resume download.", icon: "📄" }
+            { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍", action: () => setCurrentPage("builder") },
+            { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊", action: () => setShowAtsModal(true) },
+            { title: "PDF Export", desc: "One-click professional PDF resume download.", icon: "📄", action: () => setCurrentPage("resume") }
           ].map((feature, index) => (
             <motion.div
               key={feature.title}
+              onClick={feature.action}
               className="group relative bg-white/90 dark:bg-gray-800/90 p-6 sm:p-8 rounded-3xl shadow-lg hover:shadow-2xl border border-white/50 dark:border-gray-700/50 backdrop-blur-sm cursor-pointer overflow-hidden"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -113,20 +114,20 @@ function Home({ setShowWorkspace }) {
           How It Works
         </h2>
 
-        {/* Horizontal scroll on mobile */}
         <div className="overflow-x-auto pb-4 -mx-4 px-4">
           <div className="flex gap-4 sm:gap-6 min-w-max sm:min-w-0 sm:grid sm:grid-cols-4 lg:grid-cols-7 max-w-7xl mx-auto">
             {[
-              "Create Resume",
-              "Analyze JD",
-              "Improve Content",
-              "Check ATS Score",
-              "Cover Letter",
-              "Upgrade Pro",
-              "Dashboard"
+              { name: "Create Resume", page: "builder" },
+              { name: "Analyze JD", page: "builder" },
+              { name: "Improve Content", page: "builder" },
+              { name: "Check ATS Score", action: () => setShowAtsModal(true) },
+              { name: "Cover Letter", page: "resume" },
+              { name: "Upgrade Pro", page: "pricing" },
+              { name: "Dashboard", page: "dashboard" }
             ].map((step, index) => (
               <motion.div
-                key={step}
+                key={typeof step === 'string' ? step : step.name}
+                onClick={() => step.action ? step.action() : setCurrentPage(step.page)}
                 className="w-32 sm:w-auto p-4 sm:p-5 rounded-2xl shadow-md hover:shadow-xl border border-violet-100/50 dark:border-gray-700/50 bg-violet-50/90 dark:bg-gray-800/80 cursor-pointer group transition-all duration-300 text-center flex-shrink-0 sm:flex-shrink"
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
@@ -138,7 +139,7 @@ function Home({ setShowWorkspace }) {
                   {index + 1}
                 </div>
                 <h3 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white leading-tight">
-                  {step}
+                  {step.name || step}
                 </h3>
               </motion.div>
             ))}
@@ -146,61 +147,7 @@ function Home({ setShowWorkspace }) {
         </div>
       </motion.section>
 
-      {/* Pricing */}
-      <motion.section
-        id="pricing"
-        className="py-20 sm:py-24 px-4 sm:px-10 bg-gradient-to-b from-violet-50/50 to-pink-50/50 dark:from-gray-900/50 dark:to-slate-900/50"
-        initial={{ y: 50, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-      >
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-4 text-gray-900 dark:text-white">
-          Choose Your Plan
-        </h2>
-        <p className="text-center text-gray-600 dark:text-gray-300 mb-14 text-lg max-w-2xl mx-auto">
-          Start free and upgrade anytime
-        </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 max-w-5xl mx-auto">
-          <motion.div
-            className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 sm:p-10 border-2 border-gray-200 dark:border-gray-700 hover:border-violet-400 transition-all duration-500 group overflow-hidden"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            whileHover={{ y: -6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 dark:text-white">Free Plan</h3>
-            <p className="text-4xl sm:text-5xl font-black mb-6 text-gray-900 dark:text-white">₹0</p>
-            <ul className="space-y-4 text-gray-600 dark:text-gray-300 mb-12 text-lg">
-              <li className="flex items-center gap-3"><span className="text-emerald-500 font-bold">✔</span> 1 Resume Build</li>
-              <li className="flex items-center gap-3"><span className="text-emerald-500 font-bold">✔</span> Basic ATS Score</li>
-              <li className="flex items-center gap-3"><span className="text-emerald-500 font-bold">✔</span> PDF Download</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            className="relative bg-gradient-to-br from-violet-600 via-fuchsia-500 to-violet-700 text-white rounded-3xl shadow-2xl p-8 sm:p-10 overflow-hidden"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            whileHover={{ y: -6 }}
-            viewport={{ once: true }}
-          >
-            <p className="inline-flex items-center gap-2 bg-white/20 text-violet-100 px-4 py-1 rounded-full text-sm font-bold mb-6 border border-white/30">
-              ⭐ Most Popular
-            </p>
-            <h3 className="text-2xl sm:text-3xl font-bold mb-4">Pro Plan</h3>
-            <p className="text-4xl sm:text-5xl font-black mb-6">₹499</p>
-            <ul className="space-y-4 mb-8 text-lg">
-              <li className="flex items-center gap-3"><span className="text-emerald-300 font-bold">✔</span> Unlimited Resumes</li>
-              <li className="flex items-center gap-3"><span className="text-emerald-300 font-bold">✔</span> AI Rewrite</li>
-              <li className="flex items-center gap-3"><span className="text-emerald-300 font-bold">✔</span> Premium Templates</li>
-              <li className="flex items-center gap-3"><span className="text-emerald-300 font-bold">✔</span> Cover Letter Generator</li>
-            </ul>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Footer */}
+      {/* Footer (Quick Links updated to work) */}
       <footer className="bg-gradient-to-r from-slate-950 to-slate-900 text-white pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-10 grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <div>
@@ -214,9 +161,9 @@ function Home({ setShowWorkspace }) {
           <div>
             <h3 className="text-lg font-bold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2 text-slate-300 text-sm">
-              <li className="hover:text-violet-400 cursor-pointer transition-colors">Features</li>
-              <li className="hover:text-violet-400 cursor-pointer transition-colors">Pricing</li>
-              <li className="hover:text-violet-400 cursor-pointer transition-colors">Dashboard</li>
+              <li onClick={() => document.getElementById('features').scrollIntoView()} className="hover:text-violet-400 cursor-pointer transition-colors">Features</li>
+              <li onClick={() => document.getElementById('pricing').scrollIntoView()} className="hover:text-violet-400 cursor-pointer transition-colors">Pricing</li>
+              <li onClick={() => setCurrentPage("dashboard")} className="hover:text-violet-400 cursor-pointer transition-colors">Dashboard</li>
             </ul>
           </div>
           <div>
@@ -226,7 +173,7 @@ function Home({ setShowWorkspace }) {
           </div>
         </div>
         <div className="text-center text-slate-400 border-t border-slate-700/50 pt-6 text-sm">
-          © 2026 CareerForge. All rights reserved. Made with ❤️ for your career.
+          © 2026 CareerForge. All rights reserved.
         </div>
       </footer>
     </motion.div>
