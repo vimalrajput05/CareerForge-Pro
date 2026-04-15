@@ -21,10 +21,13 @@ function ResumePreview({ resumeData }) {
   // ── TEMPLATE 2: Sidebar ──
   if (template === "template2") {
     return (
-      <div id="resume-preview" className="w-[794px] bg-white">
-        <div className="flex flex-col md:flex-row min-h-[600px]">
+<div
+  id="resume-preview"
+  className="w-[794px] min-w-[794px] bg-white mx-auto"
+>
+<div className="flex flex-row min-h-[1123px]">
           {/* Sidebar */}
-          <div className="md:w-56 bg-gradient-to-b from-fuchsia-600 to-violet-700 text-white p-6 flex flex-col gap-5">
+          <div className="w-[220px] bg-gradient-to-b from-fuchsia-600 to-violet-700 text-white p-6 flex flex-col gap-5">
             {profilePic && (
               <img src={profilePic} alt="profile" className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white/50 shadow-lg" />
             )}
