@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import JDAnalysis from "./pages/JDAnalysis";
 import ATSScore from "./pages/ATSScore";
 import CoverLetter from "./pages/CoverLetter";
+import Pricing from "./pages/Pricing";
 
 
 
@@ -100,6 +101,12 @@ function App() {
           <CoverLetter
             setCurrentPage={setCurrentPage}
             setCoverLetters={setCoverLetters}
+          />
+        )}
+
+        {currentPage === "pricing" && (
+          <Pricing
+            setCurrentPage={setCurrentPage}
           />
         )}
 

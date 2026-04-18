@@ -55,6 +55,7 @@ const steps = [
     gradient: "from-yellow-500 to-amber-500",
     bg: "from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20",
     border: "border-yellow-200 dark:border-yellow-700/50",
+    page: "pricing",
   },
   {
     title: "My Dashboard",
