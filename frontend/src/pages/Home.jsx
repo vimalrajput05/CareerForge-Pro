@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 
-function Home({ setCurrentPage, setShowAtsModal }) {
+function Home({ setCurrentPage }) {
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-violet-50 via-pink-50 to-violet-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900 transition-all duration-1000"
@@ -74,7 +74,7 @@ function Home({ setCurrentPage, setShowAtsModal }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {[
             { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍", action: () => setCurrentPage("jd-analysis") },
-            { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊", action: () => setShowAtsModal(true) },
+            { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊", action: () => setCurrentPage("ats-score") },
             { title: "PDF Export", desc: "One-click professional PDF resume download.", icon: "📄", action: () => setCurrentPage("resume") }
           ].map((feature, index) => (
             <motion.div
@@ -119,14 +119,14 @@ function Home({ setCurrentPage, setShowAtsModal }) {
               { name: "Create Resume", page: "builder" },
               { name: "Analyze JD", page: "jd-analysis" },
               { name: "Improve Content", page: "resume" },
-              { name: "Check ATS Score", action: () => setShowAtsModal(true) },
+              { name: "Check ATS Score", page: "ats-score" },
               { name: "Cover Letter", page: "resume" },
               { name: "Upgrade Pro", page: "pricing" },
               { name: "Dashboard", page: "dashboard" }
             ].map((step, index) => (
               <motion.div
                 key={typeof step === 'string' ? step : step.name}
-                onClick={() => step.action ? step.action() : setCurrentPage(step.page)}
+                onClick={() => step.page ? setCurrentPage(step.page) : (step.action && step.action())}
                 className="w-32 sm:w-auto p-4 sm:p-5 rounded-2xl shadow-md hover:shadow-xl border border-violet-100/50 dark:border-gray-700/50 bg-violet-50/90 dark:bg-gray-800/80 cursor-pointer group transition-all duration-300 text-center flex-shrink-0 sm:flex-shrink"
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}

@@ -37,6 +37,7 @@ const steps = [
     gradient: "from-emerald-500 to-teal-500",
     bg: "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20",
     border: "border-emerald-200 dark:border-emerald-700/50",
+    page: "ats-score",
   },
   {
     title: "Generate Cover Letter",
@@ -61,6 +62,7 @@ const steps = [
     gradient: "from-indigo-500 to-violet-500",
     bg: "from-indigo-50 to-violet-50 dark:from-indigo-900/20 dark:to-violet-900/20",
     border: "border-indigo-200 dark:border-indigo-700/50",
+    page: "dashboard",
   },
 ];
 

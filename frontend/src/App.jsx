@@ -3,18 +3,14 @@ import Login from"./pages/Login";
 import Home from "./pages/Home";
 import Builder from "./pages/Builder";
 import ResumeBuilder from "./pages/ResumeBuilder";
-<<<<<<< HEAD
-import Dashboard from "./pages/Dashboard";
-=======
 import Dashboard from "./pages/Dashboard"; 
 import JDAnalysis from "./pages/JDAnalysis";
->>>>>>> fa4369c (Wire JD Analysis and Improve Resume flows into app)
+import ATSScore from "./pages/ATSScore";
 
 
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
-  const [showAtsModal, setShowAtsModal] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
@@ -36,6 +32,8 @@ function App() {
   ]);
 
   const [jdAnalyses, setJdAnalyses] = useState([]);
+
+  const [atsScores, setAtsScores] = useState([]);
 
   // Global helper to trigger a browser download
   const handleDownload = (filename, content) => {
@@ -66,7 +64,6 @@ function App() {
         {currentPage === "home" && (
           <Home 
             setCurrentPage={setCurrentPage} 
-            setShowAtsModal={setShowAtsModal} 
           />
         )}
         
@@ -91,6 +88,13 @@ function App() {
           />
         )}
 
+        {currentPage === "ats-score" && (
+          <ATSScore
+            setCurrentPage={setCurrentPage}
+            setAtsScores={setAtsScores}
+          />
+        )}
+
         {currentPage === "dashboard" && (
           <Dashboard 
             setCurrentPage={setCurrentPage} 
@@ -103,32 +107,13 @@ function App() {
             setCoverLetters={setCoverLetters}
             jdAnalyses={jdAnalyses}
             setJdAnalyses={setJdAnalyses}
+            atsScores={atsScores}
+            setAtsScores={setAtsScores}
           />
         )}
 
-              {currentPage === "login" && (
-        <Login setCurrentPage={setCurrentPage} />
-      )}
-    
-
-
-        {/* ATS Score Modal Overlay */}
-        {showAtsModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-violet-500 transform transition-all animate-in fade-in zoom-in duration-300">
-              <h2 className="text-2xl font-bold mb-4 dark:text-white">ATS Analysis Report</h2>
-              <div className="text-5xl font-black text-violet-600 mb-4">85%</div>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Your resume is highly compatible with most job descriptions!
-              </p>
-              <button 
-                onClick={() => setShowAtsModal(false)}
-                className="w-full bg-violet-600 text-white py-3 rounded-xl font-bold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-500/30"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+        {currentPage === "login" && (
+          <Login setCurrentPage={setCurrentPage} />
         )}
       </div>
     
