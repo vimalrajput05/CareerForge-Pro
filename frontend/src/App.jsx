@@ -6,6 +6,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import Dashboard from "./pages/Dashboard"; 
 import JDAnalysis from "./pages/JDAnalysis";
 import ATSScore from "./pages/ATSScore";
+import CoverLetter from "./pages/CoverLetter";
 
 
 
@@ -92,6 +93,13 @@ function App() {
           <ATSScore
             setCurrentPage={setCurrentPage}
             setAtsScores={setAtsScores}
+          />
+        )}
+
+        {currentPage === "cover-letter" && (
+          <CoverLetter
+            setCurrentPage={setCurrentPage}
+            setCoverLetters={setCoverLetters}
           />
         )}
 

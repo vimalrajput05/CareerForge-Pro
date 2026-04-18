@@ -120,7 +120,7 @@ function Home({ setCurrentPage }) {
               { name: "Analyze JD", page: "jd-analysis" },
               { name: "Improve Content", page: "resume" },
               { name: "Check ATS Score", page: "ats-score" },
-              { name: "Cover Letter", page: "resume" },
+              { name: "Cover Letter", page: "cover-letter" },
               { name: "Upgrade Pro", page: "pricing" },
               { name: "Dashboard", page: "dashboard" }
             ].map((step, index) => (

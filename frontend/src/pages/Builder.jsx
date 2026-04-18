@@ -46,6 +46,7 @@ const steps = [
     gradient: "from-pink-500 to-rose-500",
     bg: "from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20",
     border: "border-pink-200 dark:border-pink-700/50",
+    page: "cover-letter",
   },
   {
     title: "Upgrade to Pro",
