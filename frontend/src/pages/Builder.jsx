@@ -19,6 +19,7 @@ const steps = [
     gradient: "from-blue-500 to-cyan-500",
     bg: "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
     border: "border-blue-200 dark:border-blue-700/50",
+    page: "jd-analysis",
   },
   {
     title: "Improve Resume",
@@ -27,6 +28,7 @@ const steps = [
     gradient: "from-amber-500 to-orange-500",
     bg: "from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20",
     border: "border-amber-200 dark:border-amber-700/50",
+    page: "resume",
   },
   {
     title: "Check ATS Score",

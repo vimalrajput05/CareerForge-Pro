@@ -73,7 +73,7 @@ function Home({ setCurrentPage, setShowAtsModal }) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {[
-            { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍", action: () => setCurrentPage("builder") },
+            { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍", action: () => setCurrentPage("jd-analysis") },
             { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊", action: () => setShowAtsModal(true) },
             { title: "PDF Export", desc: "One-click professional PDF resume download.", icon: "📄", action: () => setCurrentPage("resume") }
           ].map((feature, index) => (
@@ -117,8 +117,8 @@ function Home({ setCurrentPage, setShowAtsModal }) {
           <div className="flex gap-4 sm:gap-6 min-w-max sm:min-w-0 sm:grid sm:grid-cols-4 lg:grid-cols-7 max-w-7xl mx-auto">
             {[
               { name: "Create Resume", page: "builder" },
-              { name: "Analyze JD", page: "builder" },
-              { name: "Improve Content", page: "builder" },
+              { name: "Analyze JD", page: "jd-analysis" },
+              { name: "Improve Content", page: "resume" },
               { name: "Check ATS Score", action: () => setShowAtsModal(true) },
               { name: "Cover Letter", page: "resume" },
               { name: "Upgrade Pro", page: "pricing" },

@@ -3,7 +3,12 @@ import Login from"./pages/Login";
 import Home from "./pages/Home";
 import Builder from "./pages/Builder";
 import ResumeBuilder from "./pages/ResumeBuilder";
+<<<<<<< HEAD
 import Dashboard from "./pages/Dashboard";
+=======
+import Dashboard from "./pages/Dashboard"; 
+import JDAnalysis from "./pages/JDAnalysis";
+>>>>>>> fa4369c (Wire JD Analysis and Improve Resume flows into app)
 
 
 
@@ -29,6 +34,8 @@ function App() {
   const [coverLetters, setCoverLetters] = useState([
     { id: 201, title: "Cover Letter - Google", content: "Dear Hiring Manager, I am excited to apply for the position at Google...", date: "Yesterday" }
   ]);
+
+  const [jdAnalyses, setJdAnalyses] = useState([]);
 
   // Global helper to trigger a browser download
   const handleDownload = (filename, content) => {
@@ -77,6 +84,13 @@ function App() {
           />
         )}
 
+        {currentPage === "jd-analysis" && (
+          <JDAnalysis
+            setCurrentPage={setCurrentPage}
+            setJdAnalyses={setJdAnalyses}
+          />
+        )}
+
         {currentPage === "dashboard" && (
           <Dashboard 
             setCurrentPage={setCurrentPage} 
@@ -87,6 +101,8 @@ function App() {
             setJobs={setJobs}
             coverLetters={coverLetters}
             setCoverLetters={setCoverLetters}
+            jdAnalyses={jdAnalyses}
+            setJdAnalyses={setJdAnalyses}
           />
         )}
 

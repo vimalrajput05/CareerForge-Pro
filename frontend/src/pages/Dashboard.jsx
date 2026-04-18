@@ -9,7 +9,9 @@ function Dashboard({
   jobs, 
   setJobs, 
   coverLetters, 
-  setCoverLetters 
+  setCoverLetters,
+  jdAnalyses,
+  setJdAnalyses
 }) {
   // --- LOCAL UI STATE ---
   const [activeTab, setActiveTab] = useState("resumes"); 
@@ -20,6 +22,7 @@ function Dashboard({
     if (category === "resumes") setResumes(resumes.filter(item => item.id !== id));
     if (category === "jobs") setJobs(jobs.filter(item => item.id !== id));
     if (category === "letters") setCoverLetters(coverLetters.filter(item => item.id !== id));
+    if (category === "jd") setJdAnalyses(jdAnalyses.filter(item => item.id !== id));
     
     // Deselect if the deleted item was currently viewed
     if (selectedItem?.id === id) setSelectedItem(null);
@@ -48,11 +51,12 @@ function Dashboard({
         </div>
 
         {/* Stats & Navigation Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
           {[
             { id: "resumes", label: "My Resumes", count: resumes.length },
             { id: "jobs", label: "Job Matches", count: jobs.length },
-            { id: "letters", label: "Cover Letters", count: coverLetters.length }
+            { id: "letters", label: "Cover Letters", count: coverLetters.length },
+            { id: "jd", label: "JD Analysis", count: jdAnalyses.length }
           ].map((tab) => (
             <div 
               key={tab.id}
@@ -78,7 +82,7 @@ function Dashboard({
           {/* List View */}
           <div className="lg:col-span-2 space-y-4">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white capitalize px-1">
-              Recent {activeTab === "letters" ? "Cover Letters" : activeTab}
+              Recent {activeTab === "letters" ? "Cover Letters" : activeTab === "jd" ? "JD Analysis" : activeTab}
             </h3>
             
             <div className="space-y-3">
@@ -133,15 +137,33 @@ function Dashboard({
                     <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "letters")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
                   </motion.div>
                 ))}
+
+                {/* JD ANALYSIS LIST */}
+                {activeTab === "jd" && jdAnalyses.map(item => (
+                  <motion.div key={item.id} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
+                    className={`flex items-center justify-between p-4 rounded-2xl shadow-sm cursor-pointer border transition-all ${selectedItem?.id === item.id ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-md'}`}
+                    onClick={() => setSelectedItem(item)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-2xl">🔎</span>
+                      <div>
+                        <p className="font-bold dark:text-white leading-tight">{item.title}</p>
+                        <p className="text-xs text-gray-400 mt-1">{item.date}</p>
+                      </div>
+                    </div>
+                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "jd")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
+                  </motion.div>
+                ))}
               </AnimatePresence>
             </div>
 
             {/* EMPTY STATE */}
             {((activeTab === "resumes" && resumes.length === 0) || 
               (activeTab === "jobs" && jobs.length === 0) || 
-              (activeTab === "letters" && coverLetters.length === 0)) && (
+              (activeTab === "letters" && coverLetters.length === 0) ||
+              (activeTab === "jd" && jdAnalyses.length === 0)) && (
                 <div className="text-center py-16 bg-white/50 dark:bg-gray-800/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                   <p className="text-gray-400 font-medium">No {activeTab === "letters" ? "Cover Letters" : activeTab} available yet.</p>
+                   <p className="text-gray-400 font-medium">No {activeTab === "letters" ? "Cover Letters" : activeTab === "jd" ? "JD Analysis" : activeTab} available yet.</p>
                 </div>
             )}
           </div>
