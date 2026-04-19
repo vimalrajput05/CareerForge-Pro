@@ -1,31 +1,21 @@
-import React from "react";
 import { useState } from "react";
 import Login from"./pages/Login";
 import Home from "./pages/Home";
 import Builder from "./pages/Builder";
 import ResumeBuilder from "./pages/ResumeBuilder";
-import Dashboard from "./pages/Dashboard";
-import { useEffect } from "react";
+import Dashboard from "./pages/Dashboard"; 
+import JDAnalysis from "./pages/JDAnalysis";
+import ATSScore from "./pages/ATSScore";
+import CoverLetter from "./pages/CoverLetter";
+import Pricing from "./pages/Pricing";
 
 
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('careerforge_auth') === 'true';
-  });
-  const [showAtsModal, setShowAtsModal] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
-
-  // Protect workshop pages
-  React.useEffect(() => {
-    const workshopPages = ['dashboard', 'builder', 'resume'];
-    if (workshopPages.includes(currentPage) && !isAuthenticated) {
-      setCurrentPage('login');
-    }
-  }, [currentPage, isAuthenticated]);
 
   // --- GLOBAL DATA STATE ---
   // Shared across the app so Dashboard and Builders can talk to each other
@@ -42,6 +32,10 @@ function App() {
   const [coverLetters, setCoverLetters] = useState([
     { id: 201, title: "Cover Letter - Google", content: "Dear Hiring Manager, I am excited to apply for the position at Google...", date: "Yesterday" }
   ]);
+
+  const [jdAnalyses, setJdAnalyses] = useState([]);
+
+  const [atsScores, setAtsScores] = useState([]);
 
   // Global helper to trigger a browser download
   const handleDownload = (filename, content) => {
@@ -72,9 +66,6 @@ function App() {
         {currentPage === "home" && (
           <Home 
             setCurrentPage={setCurrentPage} 
-            setShowAtsModal={setShowAtsModal}
-            isAuthenticated={isAuthenticated}
-            setIsAuthenticated={setIsAuthenticated}
           />
         )}
         
@@ -92,6 +83,33 @@ function App() {
           />
         )}
 
+        {currentPage === "jd-analysis" && (
+          <JDAnalysis
+            setCurrentPage={setCurrentPage}
+            setJdAnalyses={setJdAnalyses}
+          />
+        )}
+
+        {currentPage === "ats-score" && (
+          <ATSScore
+            setCurrentPage={setCurrentPage}
+            setAtsScores={setAtsScores}
+          />
+        )}
+
+        {currentPage === "cover-letter" && (
+          <CoverLetter
+            setCurrentPage={setCurrentPage}
+            setCoverLetters={setCoverLetters}
+          />
+        )}
+
+        {currentPage === "pricing" && (
+          <Pricing
+            setCurrentPage={setCurrentPage}
+          />
+        )}
+
         {currentPage === "dashboard" && (
           <Dashboard 
             setCurrentPage={setCurrentPage} 
@@ -102,35 +120,15 @@ function App() {
             setJobs={setJobs}
             coverLetters={coverLetters}
             setCoverLetters={setCoverLetters}
+            jdAnalyses={jdAnalyses}
+            setJdAnalyses={setJdAnalyses}
+            atsScores={atsScores}
+            setAtsScores={setAtsScores}
           />
         )}
 
         {currentPage === "login" && (
-          <Login setCurrentPage={setCurrentPage} setIsAuthenticated={setIsAuthenticated} />
-        )}
-        {currentPage === "signup" && (
-          <Signup setCurrentPage={setCurrentPage} setIsAuthenticated={setIsAuthenticated} />
-        )}
-    
-
-
-        {/* ATS Score Modal Overlay */}
-        {showAtsModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-violet-500 transform transition-all animate-in fade-in zoom-in duration-300">
-              <h2 className="text-2xl font-bold mb-4 dark:text-white">ATS Analysis Report</h2>
-              <div className="text-5xl font-black text-violet-600 mb-4">85%</div>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Your resume is highly compatible with most job descriptions!
-              </p>
-              <button 
-                onClick={() => setShowAtsModal(false)}
-                className="w-full bg-violet-600 text-white py-3 rounded-xl font-bold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-500/30"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+          <Login setCurrentPage={setCurrentPage} />
         )}
       </div>
     

@@ -1,15 +1,7 @@
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 
-function Home({ setCurrentPage, setShowAtsModal, isAuthenticated, setIsAuthenticated }) {
-  const handleHeroClick = () => {
-    if (isAuthenticated) {
-      setCurrentPage("dashboard");
-    } else {
-      setCurrentPage("login");
-    }
-  };
-
+function Home({ setCurrentPage }) {
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-violet-50 via-pink-50 to-violet-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900 transition-all duration-1000"
@@ -17,7 +9,7 @@ function Home({ setCurrentPage, setShowAtsModal, isAuthenticated, setIsAuthentic
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-        <Navbar onLogin={() => setCurrentPage("login")} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setCurrentPage={setCurrentPage} />
+<Navbar onLogin={() => setCurrentPage("login")} />
       {/* Hero Section */}
       <motion.section
         className="text-center py-20 sm:py-24 px-4 sm:px-6"
@@ -54,7 +46,7 @@ function Home({ setCurrentPage, setShowAtsModal, isAuthenticated, setIsAuthentic
         </motion.p>
 
         <motion.button
-          onClick={handleHeroClick}
+          onClick={() => setCurrentPage("builder")}
           className="bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 sm:px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -81,8 +73,8 @@ function Home({ setCurrentPage, setShowAtsModal, isAuthenticated, setIsAuthentic
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
           {[
-            { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍", action: () => setCurrentPage("builder") },
-            { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊", action: () => setShowAtsModal(true) },
+            { title: "JD Analysis", desc: "AI reads job description & extracts key keywords automatically.", icon: "🔍", action: () => setCurrentPage("jd-analysis") },
+            { title: "ATS Score", desc: "Real-time ATS compatibility score & improvement suggestions.", icon: "📊", action: () => setCurrentPage("ats-score") },
             { title: "PDF Export", desc: "One-click professional PDF resume download.", icon: "📄", action: () => setCurrentPage("resume") }
           ].map((feature, index) => (
             <motion.div
@@ -125,16 +117,16 @@ function Home({ setCurrentPage, setShowAtsModal, isAuthenticated, setIsAuthentic
           <div className="flex gap-4 sm:gap-6 min-w-max sm:min-w-0 sm:grid sm:grid-cols-4 lg:grid-cols-7 max-w-7xl mx-auto">
             {[
               { name: "Create Resume", page: "builder" },
-              { name: "Analyze JD", page: "builder" },
-              { name: "Improve Content", page: "builder" },
-              { name: "Check ATS Score", action: () => setShowAtsModal(true) },
-              { name: "Cover Letter", page: "resume" },
+              { name: "Analyze JD", page: "jd-analysis" },
+              { name: "Improve Content", page: "resume" },
+              { name: "Check ATS Score", page: "ats-score" },
+              { name: "Cover Letter", page: "cover-letter" },
               { name: "Upgrade Pro", page: "pricing" },
               { name: "Dashboard", page: "dashboard" }
             ].map((step, index) => (
               <motion.div
                 key={typeof step === 'string' ? step : step.name}
-                onClick={() => step.action ? step.action() : setCurrentPage(step.page)}
+                onClick={() => step.page ? setCurrentPage(step.page) : (step.action && step.action())}
                 className="w-32 sm:w-auto p-4 sm:p-5 rounded-2xl shadow-md hover:shadow-xl border border-violet-100/50 dark:border-gray-700/50 bg-violet-50/90 dark:bg-gray-800/80 cursor-pointer group transition-all duration-300 text-center flex-shrink-0 sm:flex-shrink"
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
