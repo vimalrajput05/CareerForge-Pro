@@ -32,11 +32,13 @@ function Dashboard({
       animate={{ opacity: 1 }}
     >
       <div className="max-w-7xl mx-auto">
+        <Navbar isAuthenticated={true} setIsAuthenticated={setIsAuthenticated} setCurrentPage={setCurrentPage} showBack={false} />
         
         {/* Header */}
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center mb-10 mt-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-sans tracking-tight">Professional Dashboard</h1>
+<h1 className="text-3xl font-bold text-gray-900 dark:text-white font-sans tracking-tight bg-gradient-to-r from-violet-600 to-emerald-500 bg-clip-text text-transparent">Career Workshop</h1>
+            <p className="text-xl font-semibold text-violet-600 dark:text-violet-400 mt-2">Build, analyze, and perfect your career documents</p>
             <p className="text-gray-500 dark:text-gray-400">Manage and download your career documents</p>
           </div>
           <button 

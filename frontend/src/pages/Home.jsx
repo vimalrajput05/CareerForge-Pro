@@ -1,7 +1,15 @@
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 
-function Home({ setCurrentPage, setShowAtsModal }) {
+function Home({ setCurrentPage, setShowAtsModal, isAuthenticated, setIsAuthenticated }) {
+  const handleHeroClick = () => {
+    if (isAuthenticated) {
+      setCurrentPage("dashboard");
+    } else {
+      setCurrentPage("login");
+    }
+  };
+
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-violet-50 via-pink-50 to-violet-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900 transition-all duration-1000"
@@ -9,7 +17,7 @@ function Home({ setCurrentPage, setShowAtsModal }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-<Navbar onLogin={() => setCurrentPage("login")} />
+        <Navbar onLogin={() => setCurrentPage("login")} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} setCurrentPage={setCurrentPage} />
       {/* Hero Section */}
       <motion.section
         className="text-center py-20 sm:py-24 px-4 sm:px-6"
@@ -46,7 +54,7 @@ function Home({ setCurrentPage, setShowAtsModal }) {
         </motion.p>
 
         <motion.button
-          onClick={() => setCurrentPage("builder")}
+          onClick={handleHeroClick}
           className="bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 sm:px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

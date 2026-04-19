@@ -1,18 +1,31 @@
+import React from "react";
 import { useState } from "react";
 import Login from"./pages/Login";
 import Home from "./pages/Home";
 import Builder from "./pages/Builder";
 import ResumeBuilder from "./pages/ResumeBuilder";
 import Dashboard from "./pages/Dashboard";
+import { useEffect } from "react";
 
 
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('careerforge_auth') === 'true';
+  });
   const [showAtsModal, setShowAtsModal] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
+
+  // Protect workshop pages
+  React.useEffect(() => {
+    const workshopPages = ['dashboard', 'builder', 'resume'];
+    if (workshopPages.includes(currentPage) && !isAuthenticated) {
+      setCurrentPage('login');
+    }
+  }, [currentPage, isAuthenticated]);
 
   // --- GLOBAL DATA STATE ---
   // Shared across the app so Dashboard and Builders can talk to each other
@@ -59,7 +72,9 @@ function App() {
         {currentPage === "home" && (
           <Home 
             setCurrentPage={setCurrentPage} 
-            setShowAtsModal={setShowAtsModal} 
+            setShowAtsModal={setShowAtsModal}
+            isAuthenticated={isAuthenticated}
+            setIsAuthenticated={setIsAuthenticated}
           />
         )}
         
@@ -90,9 +105,12 @@ function App() {
           />
         )}
 
-              {currentPage === "login" && (
-        <Login setCurrentPage={setCurrentPage} />
-      )}
+        {currentPage === "login" && (
+          <Login setCurrentPage={setCurrentPage} setIsAuthenticated={setIsAuthenticated} />
+        )}
+        {currentPage === "signup" && (
+          <Signup setCurrentPage={setCurrentPage} setIsAuthenticated={setIsAuthenticated} />
+        )}
     
 
 
