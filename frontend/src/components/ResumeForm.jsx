@@ -1,5 +1,5 @@
-function ResumeForm({ resumeData, setResumeData, handleDownloadPDF }) {
-const handleChange = (e) => {
+function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, mode = "create" }) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setResumeData({ ...resumeData, [name]: value });
   };
@@ -12,6 +12,13 @@ const handleChange = (e) => {
       <h2 className="text-xl font-bold mb-5 text-gray-900 dark:text-white">Resume Details</h2>
 
       <div className="space-y-3">
+        {mode === "improve" && (
+          <div className="rounded-3xl border border-violet-200/70 dark:border-violet-700/50 bg-violet-50/80 dark:bg-violet-900/20 p-5 shadow-sm">
+            <p className="text-sm text-gray-700 dark:text-gray-200">
+              This mode helps you polish your existing resume content. Update the fields with your current details, and the preview will show a more refined version with stronger structure and clarity.
+            </p>
+          </div>
+        )}
         {/* Template Selector */}
         <div>
           <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Template</label>
@@ -86,15 +93,14 @@ const handleChange = (e) => {
         ))}
 
         <button
-  type="button"
-  onClick={() => {
-  console.log("clicked");
-  handleDownloadPDF();
-}}
-  className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
->
-  📥 Download Resume as PDF
-</button>
+          type="button"
+          onClick={() => {
+            handleDownloadPDF();
+          }}
+          className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
+        >
+          📥 {mode === "improve" ? "Download Improved Resume" : "Download Resume as PDF"}
+        </button>
       </div>
     </div>
   );

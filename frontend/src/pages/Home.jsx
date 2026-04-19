@@ -118,7 +118,7 @@ function Home({ setCurrentPage }) {
             {[
               { name: "Create Resume", page: "builder" },
               { name: "Analyze JD", page: "jd-analysis" },
-              { name: "Improve Content", page: "resume" },
+              { name: "Improve Content", page: "improve-resume" },
               { name: "Check ATS Score", page: "ats-score" },
               { name: "Cover Letter", page: "cover-letter" },
               { name: "Upgrade Pro", page: "pricing" },
