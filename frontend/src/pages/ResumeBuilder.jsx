@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import ResumeForm from "../components/ResumeForm";
 import ResumePreview from "../components/ResumePreview";
 
-function ResumeBuilder({ setCurrentPage }) {
+function ResumeBuilder({ setCurrentPage, mode = "create" }) {
   const [resumeData, setResumeData] = useState({
     template: "template1",
     name: "",
@@ -88,22 +88,37 @@ function ResumeBuilder({ setCurrentPage }) {
       <Navbar onBack={() => setCurrentPage("builder")} showBack />
 
       <div className="px-4 sm:px-8 py-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-          Create Resume
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+          {mode === "improve" ? "Improve Resume" : "Create Resume"}
         </h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-3xl">
+          {mode === "improve"
+            ? "Paste your current resume content or update the fields below, and CareerForge will help rewrite your experience with clearer language, better structure, and stronger keyword focus."
+            : "Build your resume from scratch with live preview and instant formatting so you can export a polished PDF in minutes."}
+        </p>
+
+        {mode === "improve" && (
+          <div className="mb-6 rounded-3xl border border-violet-200/70 dark:border-violet-700/50 bg-violet-50/80 dark:bg-violet-900/20 p-5 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">What this page does</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+              This page is designed to improve your existing resume copy. Enter your current details and career highlights, then use the live preview to see the improved version before downloading.
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ResumeForm
             resumeData={resumeData}
             setResumeData={setResumeData}
             handleDownloadPDF={handleDownloadPDF}
+            mode={mode}
           />
 
           <div className="lg:sticky lg:top-20 lg:self-start bg-white p-2 rounded-2xl">
             <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">
-              Live Preview
+              {mode === "improve" ? "Improved Resume Preview" : "Live Preview"}
             </p>
-            <ResumePreview resumeData={resumeData} />
+            <ResumePreview resumeData={resumeData} mode={mode} />
           </div>
         </div>
       </div>

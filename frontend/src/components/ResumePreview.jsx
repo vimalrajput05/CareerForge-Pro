@@ -1,4 +1,4 @@
-function ResumePreview({ resumeData }) {
+function ResumePreview({ resumeData, mode = "create" }) {
   const {
     template,
     name, role, email, phone, address,

@@ -83,6 +83,14 @@ function App() {
           />
         )}
 
+        {currentPage === "improve-resume" && (
+          <ResumeBuilder 
+            setCurrentPage={setCurrentPage} 
+            setResumes={setResumes} 
+            mode="improve"
+          />
+        )}
+
         {currentPage === "jd-analysis" && (
           <JDAnalysis
             setCurrentPage={setCurrentPage}
