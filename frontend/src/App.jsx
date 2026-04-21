@@ -8,10 +8,14 @@ import JDAnalysis from "./pages/JDAnalysis";
 import ATSScore from "./pages/ATSScore";
 import CoverLetter from "./pages/CoverLetter";
 import Pricing from "./pages/Pricing";
+import { Toaster } from "react-hot-toast";
 
 
 
 function App() {
+  <Toaster position="top-right" reverseOrder={false} />
+
+  {/* your existing pages */}
   const [currentPage, setCurrentPage] = useState("home");
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');

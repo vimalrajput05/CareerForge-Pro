@@ -101,6 +101,70 @@ function Home({ setCurrentPage }) {
           ))}
         </div>
       </motion.section>
+      {/* Pricing Section */}
+<motion.section
+  id="pricing"
+  className="py-20 px-4 sm:px-10 bg-gradient-to-b from-white/60 to-violet-50/50 dark:from-gray-900/70 dark:to-slate-800/60"
+  initial={{ y: 50, opacity: 0 }}
+  whileInView={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.8 }}
+  viewport={{ once: true }}
+>
+  <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3 text-gray-900 dark:text-white">
+    Choose Your Plan
+  </h2>
+
+  <p className="text-center text-gray-500 dark:text-gray-300 mb-14 text-lg">
+    Start free and upgrade anytime
+  </p>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+    {/* Free Plan */}
+    <motion.div
+      whileHover={{ scale: 1.02, y: -4 }}
+      className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-[2rem] shadow-xl border border-white/60 dark:border-gray-700/60 p-8"
+    >
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+        Free Plan
+      </h3>
+
+      <p className="text-5xl font-black text-slate-900 dark:text-white mb-6">
+        ₹0
+      </p>
+
+      <ul className="space-y-4 text-gray-600 dark:text-gray-300 text-base">
+        <li>✔ 1 Resume Build</li>
+        <li>✔ Basic ATS Score</li>
+        <li>✔ PDF Download</li>
+      </ul>
+    </motion.div>
+
+    {/* Pro Plan */}
+    <motion.div
+      whileHover={{ scale: 1.02, y: -4 }}
+      className="relative rounded-[2rem] p-8 shadow-2xl text-white bg-gradient-to-br from-violet-600 via-purple-500 to-fuchsia-500"
+    >
+      <span className="inline-block mb-5 rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
+        ⭐ Most Popular
+      </span>
+
+      <h3 className="text-2xl font-bold mb-3">
+        Pro Plan
+      </h3>
+
+      <p className="text-5xl font-black mb-6">
+        ₹499
+      </p>
+
+      <ul className="space-y-4 text-base">
+        <li>✔ Unlimited Resumes</li>
+        <li>✔ AI Rewrite</li>
+        <li>✔ Premium Templates</li>
+        <li>✔ Cover Letter Generator</li>
+      </ul>
+    </motion.div>
+  </div>
+</motion.section>
 
       {/* How It Works */}
       <motion.section
