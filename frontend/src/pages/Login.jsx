@@ -83,16 +83,16 @@ function Login({ setCurrentPage, setIsAuthenticated }) {
           </motion.form>
 
           {/* Signup */}
-          <p className="text-center text-gray-500 text-sm mt-6">
-            New here?{" "}
-            <button
-              onClick={() => setCurrentPage("signup")}
-              className="text-violet-600 font-medium underline"
-            >
-              Create Account
-            </button>
-          </p>
-
+<p className="text-center text-gray-500">
+  New here?{" "}
+  <button
+    type="button"
+    onClick={() => setCurrentPage("signup")}
+    className="font-semibold text-violet-600 underline hover:text-fuchsia-600 transition"
+  >
+    Create Account
+  </button>
+</p>
           {/* Bottom */}
           <div className="mt-6 border-t border-gray-200 pt-4 flex items-center justify-center gap-2 text-gray-400 text-xs">
             <Shield className="w-4 h-4 text-emerald-500" />

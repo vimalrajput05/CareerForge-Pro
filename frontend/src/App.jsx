@@ -9,6 +9,7 @@ import CoverLetter from "./pages/CoverLetter";
 import Pricing from "./pages/Pricing";
 import { Toaster } from "react-hot-toast";
 import React, { useState, useEffect } from "react";
+import CreateAccount from "./pages/CreateAccount";
 
 
 
@@ -163,6 +164,9 @@ useEffect(() => {
         {currentPage === "login" && (
           <Login setCurrentPage={setCurrentPage} />
         )}
+        {currentPage === "signup" && (
+  <CreateAccount setCurrentPage={setCurrentPage} />
+)}
       </div>
     
   );
