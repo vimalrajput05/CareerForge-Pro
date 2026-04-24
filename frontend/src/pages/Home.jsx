@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 
-function Home({ setCurrentPage }) {
+function Home({ setCurrentPage, isPro }) {
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-br from-violet-50 via-pink-50 to-violet-100 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900 transition-all duration-1000"
@@ -21,7 +21,7 @@ function Home({ setCurrentPage }) {
           className="inline-block px-4 sm:px-5 py-2 rounded-full bg-violet-100/90 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300 font-medium mb-6 shadow-lg backdrop-blur-sm"
           whileHover={{ scale: 1.05 }}
         >
-          AI Resume Builder
+          AI Resume Builder {isPro && <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-400 text-yellow-900 text-xs font-bold">PRO</span>}
         </motion.p>
 
         <motion.h1
@@ -101,7 +101,7 @@ function Home({ setCurrentPage }) {
           ))}
         </div>
       </motion.section>
-      {/* Pricing Section */}
+            {/* Pricing Section */}
 <motion.section
   id="pricing"
   className="py-20 px-4 sm:px-10 bg-gradient-to-b from-white/60 to-violet-50/50 dark:from-gray-900/70 dark:to-slate-800/60"

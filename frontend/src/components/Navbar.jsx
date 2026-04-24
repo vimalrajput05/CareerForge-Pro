@@ -12,7 +12,7 @@ function Navbar({ onBack, showBack = false, className = '', onLogin, isAuthentic
       <div className="flex items-center gap-3">
         {showBack && onBack && (
           <button
-            onClick={onBack}
+          onClick={() => onBack && onBack()}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition-all duration-200 text-gray-600 dark:text-gray-300 font-medium text-sm"
             aria-label="Go back"
           >

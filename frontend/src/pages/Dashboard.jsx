@@ -1,34 +1,62 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "../components/Navbar";
 
-function Dashboard({ 
-  setCurrentPage, 
-  onDownload, 
-  resumes, 
-  setResumes, 
-  jobs, 
-  setJobs, 
-  coverLetters, 
+function Dashboard({
+  setCurrentPage,
+  onDownload,
+  resumes = [],
+  setResumes,
+  jobs = [],
+  setJobs,
+  coverLetters = [],
   setCoverLetters,
-  jdAnalyses,
+  jdAnalyses = [],
   setJdAnalyses,
-  atsScores,
-  setAtsScores
+  atsScores = [],
+  setAtsScores,
 }) {
-  // --- LOCAL UI STATE ---
-  const [activeTab, setActiveTab] = useState("resumes"); 
-  const [selectedItem, setSelectedItem] = useState(null); 
+  const [activeTab, setActiveTab] = useState("resumes");
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  // --- ACTIONS ---
+  const totalAssets =
+    resumes.length +
+    jobs.length +
+    coverLetters.length +
+    jdAnalyses.length +
+    atsScores.length;
+
+  const avgAtsScore =
+    atsScores.length > 0
+      ? Math.round(
+          atsScores.reduce((sum, item) => {
+            if (typeof item.score === "number") return sum + item.score;
+            const match = item.title?.match(/\d+/);
+            return sum + (match ? Number(match[0]) : 0);
+          }, 0) / atsScores.length
+        )
+      : 85;
+
   const handleDelete = (id, category) => {
-    if (category === "resumes") setResumes(resumes.filter(item => item.id !== id));
-    if (category === "jobs") setJobs(jobs.filter(item => item.id !== id));
-    if (category === "letters") setCoverLetters(coverLetters.filter(item => item.id !== id));
-    if (category === "jd") setJdAnalyses(jdAnalyses.filter(item => item.id !== id));
-    if (category === "ats") setAtsScores(atsScores.filter(item => item.id !== id));
-    
-    // Deselect if the deleted item was currently viewed
-    if (selectedItem?.id === id) setSelectedItem(null);
+    if (category === "resumes") {
+      setResumes(resumes.filter((item) => item.id !== id));
+    }
+    if (category === "jobs") {
+      setJobs(jobs.filter((item) => item.id !== id));
+    }
+    if (category === "letters") {
+      setCoverLetters(coverLetters.filter((item) => item.id !== id));
+    }
+    if (category === "jd") {
+      setJdAnalyses(jdAnalyses.filter((item) => item.id !== id));
+    }
+    if (category === "ats") {
+      setAtsScores(atsScores.filter((item) => item.id !== id));
+    }
+
+    if (selectedItem?.id === id) {
+      setSelectedItem(null);
+    }
   };
 
   const handleSaveDocuments = () => {
@@ -38,291 +66,638 @@ function Dashboard({
       coverLetters,
       jdAnalyses,
       atsScores,
-      exportedAt: new Date().toISOString()
+      exportedAt: new Date().toISOString(),
     };
+
     const dataStr = JSON.stringify(allData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'careerforge-dashboard-export.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    const dataUri =
+      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", "careerforge-dashboard-export.json");
     linkElement.click();
   };
 
-  const handleViewHistory = () => {
-    setActiveTab("all");
-    setSelectedItem(null);
+  const tabs = [
+    { id: "resumes", label: "Resumes", count: resumes.length, icon: "📄" },
+    { id: "jobs", label: "Jobs", count: jobs.length, icon: "🏢" },
+    { id: "letters", label: "Letters", count: coverLetters.length, icon: "✉️" },
+    { id: "jd", label: "JD Analysis", count: jdAnalyses.length, icon: "🔎" },
+    { id: "ats", label: "ATS Scores", count: atsScores.length, icon: "📊" },
+    { id: "all", label: "History", count: totalAssets, icon: "📚" },
+  ];
+
+  const activeTitle =
+    activeTab === "letters"
+      ? "Cover Letters"
+      : activeTab === "jd"
+      ? "JD Analysis"
+      : activeTab === "ats"
+      ? "ATS Scores"
+      : activeTab === "all"
+      ? "All History"
+      : activeTab === "jobs"
+      ? "Job Matches"
+      : "Resumes";
+
+  const getItemTitle = (item) => item.name || item.role || item.title || "Untitled";
+
+  const getItemSubtitle = (item, tab) => {
+    if (tab === "jobs") return item.company || "Company";
+    if (tab === "ats") return item.date || "Recent ATS score";
+    return item.date || "Recently updated";
   };
 
+  const getItemType = (tab, item) => {
+    if (item?.type) return item.type;
+    if (tab === "jobs") return "Job Match";
+    if (tab === "letters") return "Cover Letter";
+    if (tab === "jd") return "JD Analysis";
+    if (tab === "ats") return "ATS Score";
+    return "Resume";
+  };
+
+  const listCardClass = (item) =>
+    `rounded-[1.75rem] border p-5 transition-all duration-300 cursor-pointer ${
+      selectedItem?.id === item.id
+        ? "bg-violet-50 dark:bg-violet-900/20 border-violet-300 dark:border-violet-700 shadow-lg"
+        : "bg-white/90 dark:bg-gray-800/90 border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg hover:-translate-y-1"
+    }`;
+
+  const allItems = [
+    ...resumes.map((item) => ({
+      ...item,
+      category: "resumes",
+      icon: "📄",
+      type: "Resume",
+    })),
+    ...jobs.map((item) => ({
+      ...item,
+      category: "jobs",
+      icon: "🏢",
+      type: "Job Match",
+    })),
+    ...coverLetters.map((item) => ({
+      ...item,
+      category: "letters",
+      icon: "✉️",
+      type: "Cover Letter",
+    })),
+    ...jdAnalyses.map((item) => ({
+      ...item,
+      category: "jd",
+      icon: "🔎",
+      type: "JD Analysis",
+    })),
+    ...atsScores.map((item) => ({
+      ...item,
+      category: "ats",
+      icon: "📊",
+      type: "ATS Score",
+      title:
+        item.title ||
+        (typeof item.score === "number" ? `ATS Score ${item.score}%` : "ATS Score"),
+    })),
+  ];
+
+  const renderList = () => {
+    if (activeTab === "resumes") {
+      return resumes.map((item) => (
+        <motion.div
+          key={item.id}
+          layout
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          className={listCardClass(item)}
+          onClick={() => setSelectedItem(item)}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-2xl">
+                📄
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {item.name}
+                </h4>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {item.date}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item.id, "resumes");
+              }}
+              className="rounded-xl p-2 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition"
+            >
+              🗑️
+            </button>
+          </div>
+        </motion.div>
+      ));
+    }
+
+    if (activeTab === "jobs") {
+      return jobs.map((item) => (
+        <motion.div
+          key={item.id}
+          layout
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          className={listCardClass(item)}
+          onClick={() => setSelectedItem(item)}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-2xl">
+                🏢
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {item.role}
+                </h4>
+                <p className="mt-1 text-sm text-violet-600 dark:text-violet-300 font-semibold">
+                  {item.company}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item.id, "jobs");
+              }}
+              className="rounded-xl p-2 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition"
+            >
+              🗑️
+            </button>
+          </div>
+        </motion.div>
+      ));
+    }
+
+    if (activeTab === "letters") {
+      return coverLetters.map((item) => (
+        <motion.div
+          key={item.id}
+          layout
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          className={listCardClass(item)}
+          onClick={() => setSelectedItem(item)}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-2xl">
+                ✉️
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {item.title}
+                </h4>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {item.date}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item.id, "letters");
+              }}
+              className="rounded-xl p-2 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition"
+            >
+              🗑️
+            </button>
+          </div>
+        </motion.div>
+      ));
+    }
+
+    if (activeTab === "jd") {
+      return jdAnalyses.map((item) => (
+        <motion.div
+          key={item.id}
+          layout
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          className={listCardClass(item)}
+          onClick={() => setSelectedItem(item)}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-2xl">
+                🔎
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {item.title}
+                </h4>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {item.date}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item.id, "jd");
+              }}
+              className="rounded-xl p-2 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition"
+            >
+              🗑️
+            </button>
+          </div>
+        </motion.div>
+      ));
+    }
+
+    if (activeTab === "ats") {
+      return atsScores.map((item, index) => {
+        const title =
+          item.title ||
+          (typeof item.score === "number"
+            ? `ATS Score ${item.score}%`
+            : `ATS Score ${index + 1}`);
+
+        return (
+          <motion.div
+            key={item.id || index}
+            layout
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            className={listCardClass(item)}
+            onClick={() => setSelectedItem({ ...item, title })}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-2xl">
+                  📊
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                    {title}
+                  </h4>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    {item.date || "Recently checked"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(item.id, "ats");
+                }}
+                className="rounded-xl p-2 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition"
+              >
+                🗑️
+              </button>
+            </div>
+          </motion.div>
+        );
+      });
+    }
+
+    if (activeTab === "all") {
+      return allItems.map((item, index) => (
+        <motion.div
+          key={`${item.category}-${item.id || index}`}
+          layout
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          className={listCardClass(item)}
+          onClick={() => setSelectedItem(item)}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-2xl">
+                {item.icon}
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {getItemTitle(item)}
+                </h4>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {item.date || "Recent"} • {item.type}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item.id, item.category);
+              }}
+              className="rounded-xl p-2 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition"
+            >
+              🗑️
+            </button>
+          </div>
+        </motion.div>
+      ));
+    }
+
+    return null;
+  };
+
+  const isEmpty =
+    (activeTab === "resumes" && resumes.length === 0) ||
+    (activeTab === "jobs" && jobs.length === 0) ||
+    (activeTab === "letters" && coverLetters.length === 0) ||
+    (activeTab === "jd" && jdAnalyses.length === 0) ||
+    (activeTab === "ats" && atsScores.length === 0) ||
+    (activeTab === "all" && totalAssets === 0);
+
   return (
-    <motion.div 
-      className="min-h-screen bg-slate-50 dark:bg-gray-900 p-6 sm:p-10 transition-colors duration-300"
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-pink-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Header */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-10">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-sans tracking-tight">Professional Dashboard</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-2">Manage and download your career documents with clear tracking and fast access.</p>
-            <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-300">
-              <button 
+      <Navbar onBack={() => setCurrentPage("builder")} showBack />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+        {/* Hero */}
+        <motion.div
+          className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-violet-600 via-purple-500 to-fuchsia-500 p-8 sm:p-10 text-white shadow-2xl mb-8"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+        >
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+
+          <div className="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-violet-100 mb-3">
+                CareerForge Dashboard
+              </p>
+              <h1 className="text-3xl sm:text-5xl font-black">Welcome back 👋</h1>
+              <p className="mt-4 max-w-2xl text-violet-100 leading-relaxed">
+                Manage your resumes, ATS reports, cover letters, and analysis
+                history from one elegant workspace.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setCurrentPage("builder")}
+                className="rounded-2xl bg-white px-6 py-3 font-bold text-violet-700 shadow-lg hover:scale-105 transition"
+              >
+                Open Builder
+              </button>
+              <button
                 onClick={handleSaveDocuments}
-                className="inline-flex items-center gap-2 rounded-full bg-violet-50 dark:bg-violet-900/30 px-3 py-2 font-medium text-violet-700 dark:text-violet-200 hover:bg-violet-100 dark:hover:bg-violet-900/50 transition-colors cursor-pointer"
+                className="rounded-2xl bg-white/15 border border-white/30 px-6 py-3 font-bold text-white hover:bg-white/25 transition"
               >
-                🧾 Save documents
-              </button>
-              <button 
-                onClick={handleViewHistory}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-gray-800 px-3 py-2 font-medium hover:bg-slate-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-              >
-                ✅ View all history
+                Export Data
               </button>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <button 
-              onClick={() => setCurrentPage("home")}
-              className="px-5 py-2.5 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700 shadow-lg shadow-violet-500/30 transition-all active:scale-95"
-            >
-              Back to Home
-            </button>
-            <button 
-              onClick={() => setCurrentPage("ats-score")}
-              className="px-5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl font-bold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-violet-50 dark:hover:bg-gray-700 transition-all active:scale-95"
-            >
-              New ATS Check
-            </button>
-          </div>
-        </div>
+        </motion.div>
 
-        {/* Stats & Navigation Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-6 mb-10">
-          {[
-            { id: "resumes", label: "My Resumes", count: resumes.length, icon: "📄" },
-            { id: "jobs", label: "Job Matches", count: jobs.length, icon: "🏢" },
-            { id: "letters", label: "Cover Letters", count: coverLetters.length, icon: "✉️" },
-            { id: "jd", label: "JD Analysis", count: jdAnalyses.length, icon: "🔎" },
-            { id: "ats", label: "ATS Scores", count: atsScores.length, icon: "📊" },
-            { id: "all", label: "All History", count: resumes.length + jobs.length + coverLetters.length + jdAnalyses.length + atsScores.length, icon: "📚" }
-          ].map((tab) => (
-            <div 
-              key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setSelectedItem(null); // Reset detail view when switching categories
-              }}
-              className={`cursor-pointer p-6 rounded-3xl border transition-all duration-300 ${
-                activeTab === tab.id 
-                ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20 shadow-inner" 
-                : "border-transparent bg-white dark:bg-gray-800 shadow-sm hover:border-violet-200 dark:hover:border-violet-800 hover:shadow-md"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <span className="inline-flex items-center justify-center w-12 h-12 rounded-3xl bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-200 text-xl shadow-sm">
-                  {tab.icon}
+        {/* Clean Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          <div className="rounded-[1.75rem] bg-white/90 dark:bg-gray-900/80 border border-white dark:border-gray-700 p-6 shadow-lg">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+              Total Assets
+            </p>
+            <div className="mt-4 flex items-end justify-between">
+              <h2 className="text-5xl font-black text-gray-900 dark:text-white">
+                {totalAssets}
+              </h2>
+              <span className="text-3xl">📚</span>
+            </div>
+          </div>
+
+          <div className="rounded-[1.75rem] bg-white/90 dark:bg-gray-900/80 border border-white dark:border-gray-700 p-6 shadow-lg">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+              Average ATS Score
+            </p>
+            <div className="mt-4 flex items-end justify-between">
+              <h2 className="text-5xl font-black text-violet-600 dark:text-violet-300">
+                {avgAtsScore}%
+              </h2>
+              <span className="text-3xl">📊</span>
+            </div>
+          </div>
+
+          <div className="rounded-[1.75rem] bg-white/90 dark:bg-gray-900/80 border border-white dark:border-gray-700 p-6 shadow-lg">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+              Main Tools
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["Resume", "ATS", "Cover Letter", "JD Analysis"].map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-full bg-violet-50 dark:bg-violet-900/20 px-3 py-1 text-sm font-semibold text-violet-700 dark:text-violet-300"
+                >
+                  {tool}
                 </span>
-                <span className="text-xs uppercase font-semibold tracking-[0.3em] text-gray-500 dark:text-gray-400">{tab.label}</span>
-              </div>
-              <div className="mt-6">
-                <h2 className="text-4xl font-black dark:text-white">{tab.count}</h2>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Latest updates in this category</p>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* List View */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white capitalize px-1">
-              Recent {activeTab === "letters" ? "Cover Letters" : activeTab === "jd" ? "JD Analysis" : activeTab === "ats" ? "ATS Scores" : activeTab}
-            </h3>
-            
-            <div className="space-y-3">
-              <AnimatePresence mode="popLayout">
-                {/* RESUMES LIST */}
-                {activeTab === "resumes" && resumes.map(item => (
-                  <motion.div key={item.id} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className={`flex items-center justify-between p-5 rounded-3xl shadow-md cursor-pointer border transition-all duration-300 ${selectedItem?.id === item.id ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-xl'}`}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">📄</span>
-                      <div>
-                        <p className="font-semibold dark:text-white leading-tight">{item.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.date}</p>
-                      </div>
-                    </div>
-                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "resumes")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
-                  </motion.div>
-                ))}
+        {/* Tabs */}
+        <div className="mb-8 overflow-x-auto pb-2">
+          <div className="flex gap-3 min-w-max rounded-[1.75rem] bg-white/85 dark:bg-gray-900/80 p-3 border border-white dark:border-gray-700 shadow-md">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setSelectedItem(null);
+                }}
+                className={`flex items-center gap-3 rounded-2xl px-5 py-3 font-bold transition-all ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow-lg"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-gray-800"
+                }`}
+              >
+                <span>{tab.icon}</span>
+                <span>{tab.label}</span>
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-xs ${
+                    activeTab === tab.id
+                      ? "bg-white/20 text-white"
+                      : "bg-violet-100 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300"
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-                {/* JOBS LIST */}
-                {activeTab === "jobs" && jobs.map(item => (
-                  <motion.div key={item.id} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className={`flex items-center justify-between p-5 rounded-3xl shadow-md cursor-pointer border transition-all duration-300 ${selectedItem?.id === item.id ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-xl'}`}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">🏢</span>
-                      <div>
-                        <p className="font-semibold dark:text-white leading-tight">{item.role}</p>
-                        <p className="text-sm text-violet-500 font-semibold uppercase tracking-[0.2em] mt-1">{item.company}</p>
-                      </div>
-                    </div>
-                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "jobs")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
-                  </motion.div>
-                ))}
+        {/* Main Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_0.9fr] gap-8">
+          {/* Left */}
+          <div>
+            <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="text-sm uppercase tracking-[0.25em] text-violet-600 dark:text-violet-300 font-bold">
+                  Overview
+                </p>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">
+                  {activeTitle}
+                </h3>
+              </div>
 
-                {/* COVER LETTERS LIST */}
-                {activeTab === "letters" && coverLetters.map(item => (
-                  <motion.div key={item.id} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className={`flex items-center justify-between p-5 rounded-3xl shadow-md cursor-pointer border transition-all duration-300 ${selectedItem?.id === item.id ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-xl'}`}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">✉️</span>
-                      <div>
-                        <p className="font-semibold dark:text-white leading-tight">{item.title}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.date}</p>
-                      </div>
-                    </div>
-                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "letters")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
-                  </motion.div>
-                ))}
-
-                {/* JD ANALYSIS LIST */}
-                {activeTab === "jd" && jdAnalyses.map(item => (
-                  <motion.div key={item.id} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className={`flex items-center justify-between p-5 rounded-3xl shadow-md cursor-pointer border transition-all duration-300 ${selectedItem?.id === item.id ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-xl'}`}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">🔎</span>
-                      <div>
-                        <p className="font-semibold dark:text-white leading-tight">{item.title}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.date}</p>
-                      </div>
-                    </div>
-                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "jd")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
-                  </motion.div>
-                ))}
-
-                {/* ATS SCORES LIST */}
-                {activeTab === "ats" && atsScores.map(item => (
-                  <motion.div key={item.id} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className={`flex items-center justify-between p-5 rounded-3xl shadow-md cursor-pointer border transition-all duration-300 ${selectedItem?.id === item.id ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-xl'}`}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">📊</span>
-                      <div>
-                        <p className="font-semibold dark:text-white leading-tight">{item.title}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.date}</p>
-                      </div>
-                    </div>
-                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, "ats")}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
-                  </motion.div>
-                ))}
-
-                {/* ALL HISTORY LIST */}
-                {activeTab === "all" && [
-                  ...resumes.map(item => ({ ...item, category: "resumes", icon: "📄", type: "Resume" })),
-                  ...jobs.map(item => ({ ...item, category: "jobs", icon: "🏢", type: "Job Match" })),
-                  ...coverLetters.map(item => ({ ...item, category: "letters", icon: "✉️", type: "Cover Letter" })),
-                  ...jdAnalyses.map(item => ({ ...item, category: "jd", icon: "🔎", type: "JD Analysis" })),
-                  ...atsScores.map(item => ({ ...item, category: "ats", icon: "📊", type: "ATS Score" }))
-                ].sort((a, b) => new Date(b.date || "2023-01-01") - new Date(a.date || "2023-01-01")).map(item => (
-                  <motion.div key={`${item.category}-${item.id}`} layout initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}}
-                    className={`flex items-center justify-between p-5 rounded-3xl shadow-md cursor-pointer border transition-all duration-300 ${selectedItem?.id === item.id && selectedItem?.category === item.category ? 'bg-violet-100 dark:bg-violet-900/40 border-violet-300' : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-xl'}`}
-                    onClick={() => setSelectedItem({ ...item, category: item.category })}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-3xl">{item.icon}</span>
-                      <div>
-                        <p className="font-semibold dark:text-white leading-tight">{item.name || item.role || item.title}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.date} • {item.type}</p>
-                      </div>
-                    </div>
-                    <button onClick={(e) => {e.stopPropagation(); handleDelete(item.id, item.category)}} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">🗑️</button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+              <button
+                onClick={() => setCurrentPage("builder")}
+                className="self-start rounded-2xl bg-white/90 dark:bg-gray-800/90 border border-violet-100 dark:border-gray-700 px-5 py-3 text-sm font-bold text-violet-700 dark:text-violet-300 shadow-sm hover:shadow-md transition"
+              >
+                + Create New
+              </button>
             </div>
 
-            {/* EMPTY STATE */}
-            {((activeTab === "resumes" && resumes.length === 0) || 
-              (activeTab === "jobs" && jobs.length === 0) || 
-              (activeTab === "letters" && coverLetters.length === 0) ||
-              (activeTab === "jd" && jdAnalyses.length === 0) ||
-              (activeTab === "ats" && atsScores.length === 0) ||
-              (activeTab === "all" && (resumes.length + jobs.length + coverLetters.length + jdAnalyses.length + atsScores.length) === 0)) && (
-                <div className="text-center py-16 bg-white/50 dark:bg-gray-800/50 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                   <p className="text-gray-400 font-medium">No {activeTab === "letters" ? "Cover Letters" : activeTab === "jd" ? "JD Analysis" : activeTab === "ats" ? "ATS Scores" : activeTab === "all" ? "documents" : activeTab} available yet.</p>
+            <div className="space-y-4">
+              <AnimatePresence mode="popLayout">{renderList()}</AnimatePresence>
+            </div>
+
+            {isEmpty && (
+              <div className="mt-4 rounded-[1.75rem] border-2 border-dashed border-violet-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 py-16 px-6 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/20 text-3xl">
+                  📂
                 </div>
+                <h3 className="text-xl font-black text-gray-900 dark:text-white">
+                  Nothing here yet
+                </h3>
+                <p className="mt-2 text-gray-500 dark:text-gray-400">
+                  Start building your resume or create a new analysis to see items here.
+                </p>
+                <button
+                  onClick={() => setCurrentPage("builder")}
+                  className="mt-6 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 py-3 font-bold text-white shadow-lg hover:scale-105 transition"
+                >
+                  Create Resume
+                </button>
+              </div>
             )}
           </div>
 
-          {/* Details Sidebar */}
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-violet-100 dark:border-gray-700 h-fit sticky top-10">
-            <div className="flex flex-col gap-5 mb-6">
-              <div>
-                <h3 className="text-xl font-bold dark:text-white">Details View</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Inspect selected documents, analysis results, and download files.</p>
-              </div>
-              {selectedItem && (
-                <span className="self-start rounded-full bg-violet-50 dark:bg-violet-900/30 px-3 py-1 text-xs uppercase tracking-[0.25em] text-violet-600 dark:text-violet-200 font-semibold">
-                  {selectedItem.type ? selectedItem.type : activeTab === "jobs" ? "Job Match" : activeTab === "letters" ? "Cover Letter" : activeTab === "jd" ? "JD Analysis" : activeTab === "ats" ? "ATS Score" : "Resume"}
-                </span>
-              )}
+          {/* Right Sidebar */}
+          <div className="sticky top-28 h-fit rounded-[2rem] bg-white/90 dark:bg-gray-800/90 border border-white dark:border-gray-700 p-7 shadow-xl">
+            <div className="mb-6">
+              <h3 className="text-2xl font-black text-gray-900 dark:text-white">
+                Details
+              </h3>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Select an item to preview its details and download it.
+              </p>
             </div>
+
             {selectedItem ? (
-              <motion.div initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} key={selectedItem.id}>
-                <h4 className="text-2xl font-black mb-3 dark:text-white leading-tight">
-                  {selectedItem.name || selectedItem.role || selectedItem.title}
+              <motion.div
+                key={selectedItem.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <span className="inline-flex rounded-full bg-violet-50 dark:bg-violet-900/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-violet-700 dark:text-violet-300">
+                  {getItemType(activeTab, selectedItem)}
+                </span>
+
+                <h4 className="mt-4 text-2xl font-black text-gray-900 dark:text-white leading-tight">
+                  {getItemTitle(selectedItem)}
                 </h4>
-                <div className="grid gap-4 mb-6 text-sm text-gray-600 dark:text-gray-300">
+
+                <div className="mt-5 space-y-4">
                   <div className="rounded-3xl bg-slate-50 dark:bg-gray-700/50 p-4">
-                    <p className="font-semibold text-gray-900 dark:text-white mb-2">Summary</p>
-                    <p className="leading-relaxed whitespace-pre-line">
-                      {selectedItem.details || selectedItem.content || "Document processed and ready for distribution."}
+                    <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+                      Summary
+                    </p>
+                    <p className="mt-3 text-sm leading-7 text-gray-600 dark:text-gray-300 whitespace-pre-line">
+                      {selectedItem.details ||
+                        selectedItem.content ||
+                        "Document processed and ready for review."}
                     </p>
                   </div>
+
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-3xl bg-slate-50 dark:bg-gray-700/50 p-4">
-                      <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Last updated</p>
-                      <p className="mt-2 font-bold text-gray-900 dark:text-white">{selectedItem.date || "Just now"}</p>
+                      <p className="text-xs uppercase tracking-[0.22em] text-gray-500 dark:text-gray-400">
+                        Updated
+                      </p>
+                      <p className="mt-2 text-sm font-bold text-gray-900 dark:text-white">
+                        {selectedItem.date || "Just now"}
+                      </p>
                     </div>
+
                     <div className="rounded-3xl bg-slate-50 dark:bg-gray-700/50 p-4">
-                      <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Type</p>
-                      <p className="mt-2 font-bold text-gray-900 dark:text-white">{selectedItem.type ? selectedItem.type : activeTab === "jobs" ? "Job Match" : activeTab === "letters" ? "Cover Letter" : activeTab === "jd" ? "JD Analysis" : activeTab === "ats" ? "ATS Score" : "Resume"}</p>
+                      <p className="text-xs uppercase tracking-[0.22em] text-gray-500 dark:text-gray-400">
+                        Category
+                      </p>
+                      <p className="mt-2 text-sm font-bold text-gray-900 dark:text-white">
+                        {getItemType(activeTab, selectedItem)}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <button 
-                  onClick={() => onDownload(selectedItem.name || selectedItem.title, selectedItem.content || selectedItem.details)}
-                  className="w-full py-4 bg-violet-600 text-white rounded-xl font-bold shadow-lg shadow-violet-500/20 hover:bg-violet-700 transition-all active:scale-95"
+
+                <button
+                  onClick={() =>
+                    onDownload(
+                      getItemTitle(selectedItem),
+                      selectedItem.content || selectedItem.details
+                    )
+                  }
+                  className="mt-6 w-full rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 py-4 font-bold text-white shadow-lg hover:scale-[1.02] transition"
                 >
                   Download Document
                 </button>
               </motion.div>
             ) : (
-              <div className="text-center py-10">
-                <div className="text-4xl mb-3 opacity-20">📂</div>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Select an item from your list to preview details and access the download options.
+              <div className="rounded-3xl bg-slate-50 dark:bg-gray-700/40 p-8 text-center">
+                <div className="text-5xl opacity-20 mb-3">📄</div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Choose a document from the left side to preview full details here.
                 </p>
               </div>
             )}
-          </div>
 
+            <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                Quick Actions
+              </h4>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => setCurrentPage("ats-score")}
+                  className="w-full rounded-2xl bg-violet-50 dark:bg-violet-900/20 px-4 py-3 text-left font-semibold text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition"
+                >
+                  Run new ATS check
+                </button>
+
+                <button
+                  onClick={() => setCurrentPage("cover-letter")}
+                  className="w-full rounded-2xl bg-violet-50 dark:bg-violet-900/20 px-4 py-3 text-left font-semibold text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition"
+                >
+                  Create cover letter
+                </button>
+
+                <button
+                  onClick={handleSaveDocuments}
+                  className="w-full rounded-2xl bg-violet-50 dark:bg-violet-900/20 px-4 py-3 text-left font-semibold text-violet-700 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition"
+                >
+                  Export dashboard data
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>
