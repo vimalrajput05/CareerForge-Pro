@@ -21,18 +21,15 @@ function ResumePreview({ resumeData, mode = "create" }) {
   // ── TEMPLATE 2: Sidebar ──
   if (template === "template2") {
     return (
-<div
-  id="resume-preview"
-  className="w-[794px] min-w-[794px] bg-white mx-auto"
->
-<div className="flex flex-row min-h-[1123px]">
+      <div id="resume-preview" className="w-full max-w-full bg-white mx-auto overflow-hidden">
+        <div className="flex flex-col lg:flex-row gap-6 min-h-full max-w-full">
           {/* Sidebar */}
-          <div className="w-[220px] bg-gradient-to-b from-fuchsia-600 to-violet-700 text-white p-6 flex flex-col gap-5">
+          <div className="w-full lg:w-[200px] bg-gradient-to-b from-fuchsia-600 to-violet-700 text-white p-4 lg:p-6 flex flex-col gap-5">
             {profilePic && (
-              <img src={profilePic} alt="profile" className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white/50 shadow-lg" />
+              <img src={profilePic} alt="profile" className="w-20 lg:w-24 h-20 lg:h-24 rounded-full object-cover mx-auto border-4 border-white/50 shadow-lg" />
             )}
             <div className="text-center">
-              <h1 className="text-lg font-bold leading-tight">{N}</h1>
+              <h1 className="text-base lg:text-lg font-bold leading-tight">{N}</h1>
               <p className="text-xs text-fuchsia-200 mt-1">{R}</p>
             </div>
             <div>
@@ -48,7 +45,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 p-7 space-y-5">
+          <div className="flex-1 p-4 lg:p-7 space-y-5">
             <div>
               <p className={`${sectionTitle} text-violet-700 border-violet-200`}>Experience</p>
               <p className={sectionText}>{EX}</p>
@@ -70,17 +67,17 @@ function ResumePreview({ resumeData, mode = "create" }) {
   // ── TEMPLATE 3: Minimal Card ──
   if (template === "template3") {
     return (
-<div id="resume-preview" className="w-[794px] bg-white">
+      <div id="resume-preview" className="w-full max-w-full bg-white overflow-hidden">
         {/* Top accent bar */}
         <div className="h-2 bg-gradient-to-r from-slate-700 to-slate-500" />
-        <div className="p-8">
+        <div className="p-4 lg:p-8">
           {/* Header */}
-          <div className="flex items-center gap-5 mb-6 pb-5 border-b border-slate-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 mb-6 pb-5 border-b border-slate-100">
             {profilePic && (
-              <img src={profilePic} alt="profile" className="w-20 h-20 rounded-full object-cover border-2 border-slate-200 shadow" />
+              <img src={profilePic} alt="profile" className="w-16 sm:w-20 h-16 sm:h-20 rounded-full object-cover border-2 border-slate-200 shadow" />
             )}
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">{N}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-800">{N}</h1>
               <p className="text-sm text-slate-500 mt-0.5">{R}</p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
                 <span className="text-xs text-slate-400">{E}</span>
@@ -116,14 +113,14 @@ function ResumePreview({ resumeData, mode = "create" }) {
 
   // ── TEMPLATE 1: Classic (Default) ──
   return (
-<div id="resume-preview" className="w-[794px] bg-white">      {/* Header */}
-      <div className="bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white p-7">
-        <div className="flex items-center gap-5">
+    <div id="resume-preview" className="w-full max-w-full bg-white overflow-hidden">      {/* Header */}
+      <div className="bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white p-4 lg:p-7">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5">
           {profilePic && (
-            <img src={profilePic} alt="profile" className="w-20 h-20 rounded-full object-cover border-3 border-white/60 shadow-md flex-shrink-0" />
+            <img src={profilePic} alt="profile" className="w-16 sm:w-20 h-16 sm:h-20 rounded-full object-cover border-3 border-white/60 shadow-md flex-shrink-0" />
           )}
           <div>
-            <h1 className="text-2xl font-bold">{N}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">{N}</h1>
             <p className="text-fuchsia-100 text-sm mt-0.5">{R}</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
               <span className="text-xs text-white/80">{E}</span>
@@ -135,7 +132,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
       </div>
 
       {/* Body */}
-      <div className="p-7 space-y-5">
+      <div className="p-4 lg:p-7 space-y-5">
         <div>
           <p className={`${sectionTitle} text-violet-700 border-violet-200`}>Skills</p>
           <p className={sectionText}>{SK}</p>

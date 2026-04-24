@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 
-const Pricing = ({ setCurrentPage }) => {
+const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const plans = [
     {
       name: "Free",
@@ -116,14 +118,23 @@ const Pricing = ({ setCurrentPage }) => {
                 </div>
 
                 <button
-                  onClick={() => setCurrentPage("home")}
+                  onClick={() => {
+                    if (plan.name === "Pro" && !isPro) {
+                      setSelectedPlan(plan);
+                      setShowPaymentModal(true);
+                    } else if (plan.name === "Free") {
+                      setCurrentPage("home");
+                    } else {
+                      setCurrentPage("home");
+                    }
+                  }}
                   className={`w-full py-3 rounded-xl font-bold transition-all active:scale-95 mb-8 ${
                     plan.highlighted
                       ? "bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg shadow-yellow-500/30 hover:shadow-xl"
                       : "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-500/20"
                   }`}
                 >
-                  {plan.name === "Free" ? "Get Started" : "Upgrade Now"}
+                  {plan.name === "Free" ? "Get Started" : isPro && plan.name === "Pro" ? "Current Plan" : "Upgrade Now"}
                 </button>
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
@@ -217,6 +228,91 @@ const Pricing = ({ setCurrentPage }) => {
           </button>
         </motion.div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && selectedPlan && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-md w-full"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+          >
+            <div className="p-8">
+              <div className="text-center mb-6">
+                <div className="text-4xl mb-4">⭐</div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Upgrade to {selectedPlan.name}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Unlock all Pro features instantly
+                </p>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600 dark:text-gray-300">Plan</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{selectedPlan.name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 dark:text-gray-300">Price</span>
+                  <span className="text-2xl font-bold text-violet-600 dark:text-violet-400">
+                    ${selectedPlan.price}
+                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-1">
+                      {selectedPlan.period}
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Payment Methods</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <button className="flex items-center justify-center gap-2 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:border-violet-300 dark:hover:border-violet-600 transition-colors">
+                    <span className="text-lg">💳</span>
+                    <span className="text-sm font-medium">Credit Card</span>
+                  </button>
+                  <button className="flex items-center justify-center gap-2 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:border-violet-300 dark:hover:border-violet-600 transition-colors">
+                    <span className="text-lg">🅿️</span>
+                    <span className="text-sm font-medium">PayPal</span>
+                  </button>
+                  <button className="flex items-center justify-center gap-2 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:border-violet-300 dark:hover:border-violet-600 transition-colors">
+                    <span className="text-lg">🏦</span>
+                    <span className="text-sm font-medium">Bank Transfer</span>
+                  </button>
+                  <button className="flex items-center justify-center gap-2 p-3 border border-gray-200 dark:border-gray-600 rounded-xl hover:border-violet-300 dark:hover:border-violet-600 transition-colors">
+                    <span className="text-lg">📱</span>
+                    <span className="text-sm font-medium">Digital Wallet</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowPaymentModal(false)}
+                  className="flex-1 py-3 px-4 border border-gray-200 dark:border-gray-600 rounded-xl font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    upgradeToPro();
+                    setShowPaymentModal(false);
+                    setCurrentPage("dashboard");
+                  }}
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white rounded-xl font-bold hover:shadow-lg transition-all active:scale-95"
+                >
+                  Pay Now
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
+                Secure payment powered by Stripe • 30-day money-back guarantee
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

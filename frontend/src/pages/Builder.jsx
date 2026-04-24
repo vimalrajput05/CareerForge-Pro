@@ -11,6 +11,7 @@ const steps = [
     bg: "from-violet-50 to-fuchsia-50 dark:from-violet-900/20 dark:to-fuchsia-900/20",
     border: "border-violet-200 dark:border-violet-700/50",
     page: "resume",
+    pro: false,
   },
   {
     title: "Analyze Job Description",
@@ -20,6 +21,7 @@ const steps = [
     bg: "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
     border: "border-blue-200 dark:border-blue-700/50",
     page: "jd-analysis",
+    pro: true,
   },
   {
     title: "Improve Resume",
@@ -29,6 +31,7 @@ const steps = [
     bg: "from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20",
     border: "border-amber-200 dark:border-amber-700/50",
     page: "improve-resume",
+    pro: true,
   },
   {
     title: "Check ATS Score",
@@ -38,6 +41,7 @@ const steps = [
     bg: "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20",
     border: "border-emerald-200 dark:border-emerald-700/50",
     page: "ats-score",
+    pro: false,
   },
   {
     title: "Generate Cover Letter",
@@ -47,6 +51,7 @@ const steps = [
     bg: "from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20",
     border: "border-pink-200 dark:border-pink-700/50",
     page: "cover-letter",
+    pro: true,
   },
   {
     title: "Upgrade to Pro",
@@ -68,7 +73,7 @@ const steps = [
   },
 ];
 
-function Builder({ setCurrentPage }) {
+function Builder({ setCurrentPage, isPro }) {
   const [selectedStep, setSelectedStep] = useState("");
 
   return (
@@ -104,10 +109,14 @@ function Builder({ setCurrentPage }) {
           {steps.map((step, index) => (
             <motion.div
               key={step.title}
-              onClick={() =>
-                step.page ? setCurrentPage(step.page) : setSelectedStep(step.title)
-              }
-              className={`cursor-pointer bg-gradient-to-br ${step.bg} border ${step.border} rounded-3xl p-6 sm:p-7 shadow-sm hover:shadow-xl transition-all duration-300 group relative overflow-hidden`}
+              onClick={() => {
+                if (step.pro && !isPro) {
+                  setCurrentPage("pricing");
+                } else {
+                  step.page ? setCurrentPage(step.page) : setSelectedStep(step.title);
+                }
+              }}
+              className={`cursor-pointer bg-gradient-to-br ${step.bg} border ${step.border} rounded-3xl p-6 sm:p-7 shadow-sm hover:shadow-xl transition-all duration-300 group relative overflow-hidden ${step.pro && !isPro ? 'opacity-75' : ''}`}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.07 }}
@@ -125,6 +134,14 @@ function Builder({ setCurrentPage }) {
               >
                 {step.icon}
               </motion.div>
+
+              {step.pro && (
+                <div className="mb-3">
+                  <span className="inline-block px-2 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold shadow-sm">
+                    PRO
+                  </span>
+                </div>
+              )}
 
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 leading-tight">
                 {step.title}

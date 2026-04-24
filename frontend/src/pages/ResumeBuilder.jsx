@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import ResumeForm from "../components/ResumeForm";
 import ResumePreview from "../components/ResumePreview";
 
-function ResumeBuilder({ setCurrentPage, mode = "create" }) {
+function ResumeBuilder({ setCurrentPage, mode = "create", isPro }) {
   const [resumeData, setResumeData] = useState({
     template: "template1",
     name: "",
@@ -18,70 +18,111 @@ function ResumeBuilder({ setCurrentPage, mode = "create" }) {
     profilePic: "",
   });
   const handleDownloadPDF = () => {
-  const element = document.getElementById("resume-preview");
+    const element = document.getElementById("resume-preview");
 
-  if (!element) {
-    alert("Preview not found");
-    return;
-  }
+    if (!element) {
+      alert("Preview not found");
+      return;
+    }
 
-  const printWindow = window.open("", "_blank", "width=900,height=1200");
+    const printWindow = window.open("", "_blank", "width=900,height=1200");
 
-  if (!printWindow) {
-    alert("Popup blocked. Please allow popups.");
-    return;
-  }
+    if (!printWindow) {
+      alert("Popup blocked. Please allow popups.");
+      return;
+    }
 
-  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-    .map((node) => node.outerHTML)
-    .join("");
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map((node) => node.outerHTML)
+      .join("");
 
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Resume PDF</title>
-        ${styles}
-        <style>
-          body {
-            margin: 0;
-            padding: 24px;
-            background: white !important;
-          }
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Resume PDF</title>
+          ${styles}
+          <style>
+            body {
+              margin: 0;
+              padding: 24px;
+              background: white !important;
+            }
 
-          #resume-preview {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background: white !important;
-            box-shadow: none !important;
-          }
+            #resume-preview {
+              width: 100%;
+              max-width: 800px;
+              margin: 0 auto;
+              background: white !important;
+              box-shadow: none !important;
+            }
 
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
 
-          @page {
-            size: A4;
-            margin: 12mm;
-          }
-        </style>
-      </head>
-      <body>
-        ${element.outerHTML}
-      </body>
-    </html>
-  `);
+            @page {
+              size: A4;
+              margin: 12mm;
+            }
+          </style>
+        </head>
+        <body>
+          ${element.outerHTML}
+        </body>
+      </html>
+    `);
 
-  printWindow.document.close();
+    printWindow.document.close();
 
-  setTimeout(() => {
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-  }, 700);
-};
-  
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }, 700);
+  };
+
+  const handleDownloadWord = () => {
+    if (!isPro) {
+      alert("Word download is a Pro feature. Upgrade to access this feature.");
+      setCurrentPage("pricing");
+      return;
+    }
+
+    // For demo purposes, we'll create a simple text file
+    // In a real app, this would generate a proper .docx file
+    const content = `
+${resumeData.name || "Your Name"}
+${resumeData.role || "Your Role"}
+
+Contact:
+${resumeData.email || "your@email.com"}
+${resumeData.phone || "+91 XXXXX XXXXX"}
+${resumeData.address || "Your Address"}
+
+Skills:
+${resumeData.skills || "Add your skills"}
+
+Experience:
+${resumeData.experience || "Add your experience"}
+
+Projects:
+${resumeData.projects || "Add your projects"}
+
+Certifications:
+${resumeData.certifications || "Add your certifications"}
+    `;
+
+    const blob = new Blob([content], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${resumeData.name || "resume"}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50/80 to-pink-50/80 dark:from-gray-900 dark:to-gray-800 transition-all duration-300">
@@ -111,14 +152,18 @@ function ResumeBuilder({ setCurrentPage, mode = "create" }) {
             resumeData={resumeData}
             setResumeData={setResumeData}
             handleDownloadPDF={handleDownloadPDF}
+            handleDownloadWord={handleDownloadWord}
             mode={mode}
+            isPro={isPro}
           />
 
-          <div className="lg:sticky lg:top-20 lg:self-start bg-white p-2 rounded-2xl">
+          <div className="lg:sticky lg:top-20 lg:self-start bg-white p-4 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">
               {mode === "improve" ? "Improved Resume Preview" : "Live Preview"}
             </p>
-            <ResumePreview resumeData={resumeData} mode={mode} />
+            <div className="overflow-x-auto">
+              <ResumePreview resumeData={resumeData} mode={mode} />
+            </div>
           </div>
         </div>
       </div>

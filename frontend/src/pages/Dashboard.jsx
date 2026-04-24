@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "../components/Navbar";
 
 function Dashboard({ 
   setCurrentPage, 
@@ -58,11 +59,12 @@ function Dashboard({
 
   return (
     <motion.div 
-      className="min-h-screen bg-slate-50 dark:bg-gray-900 p-6 sm:p-10 transition-colors duration-300"
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-pink-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 p-6 sm:p-10 transition-colors duration-300"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="max-w-7xl mx-auto">
+      <Navbar onBack={() => setCurrentPage("builder")} showBack />
+      <div className="max-w-7xl mx-auto mt-6">
         
         {/* Header */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-10">
@@ -86,10 +88,10 @@ function Dashboard({
           </div>
           <div className="flex flex-wrap gap-3">
             <button 
-              onClick={() => setCurrentPage("home")}
+              onClick={() => setCurrentPage("builder")}
               className="px-5 py-2.5 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700 shadow-lg shadow-violet-500/30 transition-all active:scale-95"
             >
-              Back to Home
+              Back to Workspace
             </button>
             <button 
               onClick={() => setCurrentPage("ats-score")}
@@ -97,6 +99,28 @@ function Dashboard({
             >
               New ATS Check
             </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          <div className="rounded-3xl bg-white/90 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 p-6 shadow-lg shadow-violet-500/10">
+            <h3 className="text-base font-semibold uppercase tracking-[0.2em] text-violet-600 dark:text-violet-300 mb-3">Workspace Status</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+              Track your recent documents, keep your resume edits organized, and quickly jump back into the workspace when you need to refine your resume or run a new ATS check.
+            </p>
+          </div>
+          <div className="rounded-3xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white p-6 shadow-xl shadow-violet-500/20">
+            <p className="text-sm uppercase tracking-[0.2em] opacity-80 mb-2">Total career assets</p>
+            <p className="text-4xl font-black">{resumes.length + jobs.length + coverLetters.length + jdAnalyses.length + atsScores.length}</p>
+            <p className="mt-3 text-sm text-violet-100 opacity-90">All your saved resumes, letters, analyses, and ATS reports in one place.</p>
+          </div>
+          <div className="rounded-3xl bg-white/90 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 p-6 shadow-lg shadow-violet-500/10">
+            <p className="text-sm uppercase tracking-[0.2em] font-semibold text-gray-500 dark:text-gray-400 mb-3">Quick actions</p>
+            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+              <p>• Edit your latest resume directly from workspace.</p>
+              <p>• Upload a new ATS report or review saved scores.</p>
+              <p>• Save documents securely or export your full history.</p>
+            </div>
           </div>
         </div>
 

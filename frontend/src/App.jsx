@@ -16,6 +16,9 @@ function App() {
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
+  const [isPro, setIsPro] = useState(() => {
+    return localStorage.getItem('isPro') === 'true';
+  });
 
   // --- GLOBAL DATA STATE ---
   // Shared across the app so Dashboard and Builders can talk to each other
@@ -61,25 +64,35 @@ function App() {
     }
   };
 
+  const upgradeToPro = () => {
+    setIsPro(true);
+    localStorage.setItem('isPro', 'true');
+    // Simulate payment success - in real app, this would be after actual payment
+    alert('Payment successful! Pro features activated.');
+  };
+
   return (
       <div className={isDark ? "dark" : ""}>
         {currentPage === "home" && (
           <Home 
-            setCurrentPage={setCurrentPage} 
+            setCurrentPage={setCurrentPage}
+            isPro={isPro}
           />
         )}
         
         {currentPage === "builder" && (
           <Builder 
             setCurrentPage={setCurrentPage} 
-            setCoverLetters={setCoverLetters} 
+            setCoverLetters={setCoverLetters}
+            isPro={isPro}
           />
         )}
         
         {currentPage === "resume" && (
           <ResumeBuilder 
             setCurrentPage={setCurrentPage} 
-            setResumes={setResumes} 
+            setResumes={setResumes}
+            isPro={isPro}
           />
         )}
 
@@ -88,6 +101,7 @@ function App() {
             setCurrentPage={setCurrentPage} 
             setResumes={setResumes} 
             mode="improve"
+            isPro={isPro}
           />
         )}
 
@@ -115,6 +129,8 @@ function App() {
         {currentPage === "pricing" && (
           <Pricing
             setCurrentPage={setCurrentPage}
+            isPro={isPro}
+            upgradeToPro={upgradeToPro}
           />
         )}
 

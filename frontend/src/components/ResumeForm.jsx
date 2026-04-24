@@ -1,4 +1,4 @@
-function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, mode = "create" }) {
+function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, handleDownloadWord, mode = "create", isPro }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setResumeData({ ...resumeData, [name]: value });
@@ -21,7 +21,9 @@ function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, mode = "crea
         )}
         {/* Template Selector */}
         <div>
-          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Template</label>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+            Template {isPro && <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 font-bold">PRO</span>}
+          </label>
           <select
             name="template"
             value={resumeData.template}
@@ -31,7 +33,18 @@ function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, mode = "crea
             <option value="template1">Template 1 — Classic Header</option>
             <option value="template2">Template 2 — Sidebar</option>
             <option value="template3">Template 3 — Minimal Card</option>
+            {isPro && (
+              <>
+                <option value="template4">Template 4 — Modern Grid</option>
+                <option value="template5">Template 5 — Executive Style</option>
+              </>
+            )}
           </select>
+          {!isPro && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Upgrade to Pro for 5+ premium templates
+            </p>
+          )}
         </div>
 
         {/* Profile Photo */}
@@ -92,15 +105,29 @@ function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, mode = "crea
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={() => {
-            handleDownloadPDF();
-          }}
-          className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
-        >
-          📥 {mode === "improve" ? "Download Improved Resume" : "Download Resume as PDF"}
-        </button>
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => {
+              handleDownloadPDF();
+            }}
+            className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
+          >
+            📄 {mode === "improve" ? "Download Improved Resume" : "Download Resume as PDF"}
+          </button>
+
+          {isPro && (
+            <button
+              type="button"
+              onClick={() => {
+                handleDownloadWord();
+              }}
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
+            >
+              📝 Download as Word Document
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
