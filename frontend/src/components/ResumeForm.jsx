@@ -1,29 +1,60 @@
-function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, handleDownloadWord, mode = "create", isPro }) {
+function ResumeForm({
+  resumeData,
+  setResumeData,
+  handleDownloadPDF,
+  handleDownloadWord,
+  mode = "create",
+  isPro,
+  setCurrentPage,
+}) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setResumeData({ ...resumeData, [name]: value });
   };
 
-  const inputClass = "w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-3 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:focus:ring-violet-400 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 shadow-sm text-sm";
+  const handleDownloadClick = () => {
+    if (resumeData.template === "template4" && !isPro) {
+      alert("Premium template download is available only for Pro users.");
+      setCurrentPage("pricing");
+      return;
+    }
+
+    handleDownloadPDF();
+  };
+
+  const inputClass =
+    "w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-3 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:focus:ring-violet-400 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 shadow-sm text-sm";
+
   const textareaClass = `${inputClass} resize-vertical h-24`;
 
   return (
     <div className="bg-white/90 dark:bg-gray-800/90 rounded-3xl p-6 shadow-md hover:shadow-xl transition-all duration-300 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
-      <h2 className="text-xl font-bold mb-5 text-gray-900 dark:text-white">Resume Details</h2>
+      <h2 className="text-xl font-bold mb-5 text-gray-900 dark:text-white">
+        Resume Details
+      </h2>
 
       <div className="space-y-3">
         {mode === "improve" && (
           <div className="rounded-3xl border border-violet-200/70 dark:border-violet-700/50 bg-violet-50/80 dark:bg-violet-900/20 p-5 shadow-sm">
             <p className="text-sm text-gray-700 dark:text-gray-200">
-              This mode helps you polish your existing resume content. Update the fields with your current details, and the preview will show a more refined version with stronger structure and clarity.
+              This mode helps you polish your existing resume content. Update the
+              fields with your current details, and the preview will show a more
+              refined version with stronger structure and clarity.
             </p>
           </div>
         )}
+
         {/* Template Selector */}
         <div>
           <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
-            Template {isPro && <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 font-bold">PRO</span>}
+            Template{" "}
+            {isPro && (
+              <span className="ml-2 px-1.5 py-0.5 rounded text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 font-bold">
+                PRO
+              </span>
+            )}
           </label>
+
           <select
             name="template"
             value={resumeData.template}
@@ -33,28 +64,28 @@ function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, handleDownlo
             <option value="template1">Template 1 — Classic Header</option>
             <option value="template2">Template 2 — Sidebar</option>
             <option value="template3">Template 3 — Minimal Card</option>
-            {isPro && (
-              <>
-                <option value="template4">Template 4 — Modern Grid</option>
-                <option value="template5">Template 5 — Executive Style</option>
-              </>
-            )}
+            <option value="template4">Premium Executive 👑</option>
           </select>
-          {!isPro && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Upgrade to Pro for 5+ premium templates
+
+          {!isPro && resumeData.template === "template4" && (
+            <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-2 font-semibold">
+              Premium template can be previewed, but download requires Pro.
             </p>
           )}
         </div>
 
         {/* Profile Photo */}
         <div>
-          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Profile Photo</label>
+          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+            Profile Photo
+          </label>
+
           <input
             type="file"
             accept="image/*"
             onChange={(e) => {
               const file = e.target.files[0];
+
               if (file) {
                 const imageURL = URL.createObjectURL(file);
                 setResumeData({ ...resumeData, profilePic: imageURL });
@@ -67,64 +98,144 @@ function ResumeForm({ resumeData, setResumeData, handleDownloadPDF, handleDownlo
         {/* Basic Info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Full Name *</label>
-            <input type="text" name="name" placeholder="John Doe" value={resumeData.name} onChange={handleChange} className={inputClass} />
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+              Full Name *
+            </label>
+
+            <input
+              type="text"
+              name="name"
+              placeholder="John Doe"
+              value={resumeData.name}
+              onChange={handleChange}
+              className={inputClass}
+            />
           </div>
+
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Job Role</label>
-            <input type="text" name="role" placeholder="Frontend Developer" value={resumeData.role} onChange={handleChange} className={inputClass} />
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+              Job Role
+            </label>
+
+            <input
+              type="text"
+              name="role"
+              placeholder="Frontend Developer"
+              value={resumeData.role}
+              onChange={handleChange}
+              className={inputClass}
+            />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Email</label>
-            <input type="email" name="email" placeholder="john@email.com" value={resumeData.email} onChange={handleChange} className={inputClass} />
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+              Email
+            </label>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="john@email.com"
+              value={resumeData.email}
+              onChange={handleChange}
+              className={inputClass}
+            />
           </div>
+
           <div>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Phone</label>
-            <input type="tel" name="phone" placeholder="+91 98765 43210" value={resumeData.phone} onChange={handleChange} className={inputClass} />
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+              Phone
+            </label>
+
+            <input
+              type="tel"
+              name="phone"
+              placeholder="+91 98765 43210"
+              value={resumeData.phone}
+              onChange={handleChange}
+              className={inputClass}
+            />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">Location</label>
-          <input type="text" name="address" placeholder="Mumbai, Maharashtra" value={resumeData.address} onChange={handleChange} className={inputClass} />
+          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+            Location
+          </label>
+
+          <input
+            type="text"
+            name="address"
+            placeholder="Mumbai, Maharashtra"
+            value={resumeData.address}
+            onChange={handleChange}
+            className={inputClass}
+          />
         </div>
 
         {/* Detailed sections */}
         {[
-          { name: "skills", label: "Skills", placeholder: "React, Node.js, Python, SQL..." },
-          { name: "experience", label: "Experience", placeholder: "Company Name — Role (Year)\nDescribe your responsibilities..." },
-          { name: "projects", label: "Projects & Achievements", placeholder: "Project Name — Brief description\nTech used, impact..." },
-          { name: "certifications", label: "Education & Certifications", placeholder: "B.Tech CSE — XYZ University (2022)\nAWS Certified..." },
+          {
+            name: "skills",
+            label: "Skills",
+            placeholder: "React, Node.js, Python, SQL...",
+          },
+          {
+            name: "experience",
+            label: "Experience",
+            placeholder:
+              "Company Name — Role (Year)\nDescribe your responsibilities...",
+          },
+          {
+            name: "projects",
+            label: "Projects & Achievements",
+            placeholder: "Project Name — Brief description\nTech used, impact...",
+          },
+          {
+            name: "certifications",
+            label: "Education & Certifications",
+            placeholder:
+              "B.Tech CSE — XYZ University (2022)\nAWS Certified...",
+          },
         ].map(({ name, label, placeholder }) => (
           <div key={name}>
-            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">{label}</label>
-            <textarea name={name} placeholder={placeholder} value={resumeData[name]} onChange={handleChange} className={textareaClass} />
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide">
+              {label}
+            </label>
+
+            <textarea
+              name={name}
+              placeholder={placeholder}
+              value={resumeData[name]}
+              onChange={handleChange}
+              className={textareaClass}
+            />
           </div>
         ))}
 
-        <div className="space-y-3">
+        <div className="space-y-3 pt-2">
           <button
             type="button"
-            onClick={() => {
-              handleDownloadPDF();
-            }}
+            onClick={handleDownloadClick}
             className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
           >
-            📄 {mode === "improve" ? "Download Improved Resume" : "Download Resume as PDF"}
+            📄{" "}
+            {resumeData.template === "template4" && !isPro
+              ? "Unlock Premium Download"
+              : mode === "improve"
+              ? "Download Improved Resume"
+              : "Download Resume as PDF"}
           </button>
 
-          {isPro && (
+          {handleDownloadWord && (
             <button
               type="button"
-              onClick={() => {
-                handleDownloadWord();
-              }}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-md text-sm"
+              onClick={handleDownloadWord}
+              className="w-full border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300 px-6 py-3.5 rounded-xl font-semibold hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-all duration-300 text-sm"
             >
-              📝 Download as Word Document
+              📝 Download Resume as Word
             </button>
           )}
         </div>
