@@ -62,7 +62,7 @@ const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50/80 to-pink-50/80 dark:from-gray-900 dark:to-gray-800 transition-all duration-300">
-      <Navbar onBack={() => setCurrentPage("home")} showBack />
+      <Navbar onBack={() => setCurrentPage("builder")} showBack />
 
       <div className="px-4 sm:px-8 py-8 max-w-7xl mx-auto">
         <motion.div
@@ -157,7 +157,6 @@ const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
             </motion.div>
           ))}
         </div>
-
         {/* FAQ Section */}
         <motion.div
           className="bg-white/90 dark:bg-gray-800/90 rounded-3xl p-8 shadow-xl border border-gray-200/50 dark:border-gray-700/50 mb-8"
@@ -208,6 +207,7 @@ const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
             </div>
           </div>
         </motion.div>
+
 
         {/* CTA Footer */}
         <motion.div
