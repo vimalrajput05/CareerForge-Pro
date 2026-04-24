@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Login from"./pages/Login";
 import Home from "./pages/Home";
 import Builder from "./pages/Builder";
@@ -9,6 +8,7 @@ import ATSScore from "./pages/ATSScore";
 import CoverLetter from "./pages/CoverLetter";
 import Pricing from "./pages/Pricing";
 import { Toaster } from "react-hot-toast";
+import React, { useState, useEffect } from "react";
 
 
 
@@ -16,7 +16,12 @@ function App() {
   <Toaster position="top-right" reverseOrder={false} />
 
   {/* your existing pages */}
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState(() => {
+  return localStorage.getItem("currentPage") || "home";
+});
+useEffect(() => {
+  localStorage.setItem("currentPage", currentPage);
+}, [currentPage]);
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });

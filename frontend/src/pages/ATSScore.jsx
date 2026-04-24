@@ -10,8 +10,8 @@ import {
   AlertCircle,
   Loader2,
   Target,
+  ChevronLeft,
 } from "lucide-react";
-
 const ATSScore = ({ setCurrentPage, setAtsScores }) => {
   const [resume, setResume] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -156,7 +156,15 @@ const ATSScore = ({ setCurrentPage, setAtsScores }) => {
       <div className="absolute bottom-20 right-10 h-80 w-80 rounded-full bg-fuchsia-300/30 blur-3xl" />
 
       <Navbar setCurrentPage={setCurrentPage} />
-
+      <div className="mb-8">
+  <button
+    onClick={() => setCurrentPage("builder")}
+    className="inline-flex items-center gap-2 rounded-xl px-1 py-2 text-sm font-bold text-slate-600 hover:text-purple-700 transition-all duration-300"
+  >
+    <ChevronLeft className="h-5 w-5" />
+    Back
+  </button>
+</div>
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <section className="mb-10">
           <div className="inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-2 text-sm font-bold text-purple-700 mb-5">
