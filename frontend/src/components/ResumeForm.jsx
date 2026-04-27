@@ -10,6 +10,9 @@ function ResumeForm({
   setCurrentPage,
 }) {
   const [improvingField, setImprovingField] = useState(null);
+  const [pastedResume, setPastedResume] = useState("");
+  const [extracting, setExtracting] = useState(false);
+  const [extracted, setExtracted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,6 +61,41 @@ function ResumeForm({
     }
   };
 
+  const handleImproveResume = async () => {
+    if (!pastedResume.trim()) {
+      alert("Please paste your resume first")
+      return
+    }
+    try {
+      setExtracting(true)
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "llama3-8b-8192",
+          messages: [{
+            role: "user",
+            content: `You are a professional resume editor. Improve this resume and extract fields. Return ONLY a JSON object with no extra text:\n{\n  "name": "",\n  "role": "",\n  "email": "",\n  "phone": "",\n  "address": "",\n  "skills": "",\n  "experience": "",\n  "projects": "",\n  "certifications": ""\n}\n\nResume: ${pastedResume}`
+          }],
+          max_tokens: 1000
+        })
+      })
+      const data = await response.json()
+      const text = data.choices[0].message.content
+      const clean = text.replace(/```json|```/g, "").trim()
+      const parsed = JSON.parse(clean)
+      setResumeData({ ...resumeData, ...parsed })
+      setExtracted(true)
+    } catch (err) {
+      alert("AI improve failed. Check your VITE_GROQ_API_KEY in .env file.")
+    } finally {
+      setExtracting(false)
+    }
+  };
+
   const inputClass =
     "w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-3 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:focus:ring-violet-400 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 shadow-sm text-sm";
 
@@ -71,12 +109,35 @@ function ResumeForm({
 
       <div className="space-y-3">
         {mode === "improve" && (
-          <div className="rounded-3xl border border-violet-200/70 dark:border-violet-700/50 bg-violet-50/80 dark:bg-violet-900/20 p-5 shadow-sm">
-            <p className="text-sm text-gray-700 dark:text-gray-200">
-              This mode helps you polish your existing resume content. Update the
-              fields with your current details, and the preview will show a more
-              refined version with stronger structure and clarity.
-            </p>
+          <div className="space-y-3">
+            <div className="rounded-3xl border border-violet-200/70 dark:border-violet-700/50 bg-violet-50/80 dark:bg-violet-900/20 p-5 shadow-sm">
+              <p className="text-sm text-gray-700 dark:text-gray-200 mb-3">
+                Paste your full resume below and CareerForge AI will extract and improve all fields automatically.
+              </p>
+              <textarea
+                rows="6"
+                placeholder="Paste your full resume text here..."
+                value={pastedResume}
+                onChange={(e) => setPastedResume(e.target.value)}
+                className={`${textareaClass} h-auto`}
+              />
+              <button
+                type="button"
+                onClick={handleImproveResume}
+                disabled={extracting}
+                className="mt-3 w-full rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white px-4 py-2.5 text-sm font-semibold hover:from-violet-700 hover:to-fuchsia-600 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {extracting ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    </svg>
+                    Improving with AI...
+                  </>
+                ) : extracted ? "✅ Improved! Paste again to re-improve" : "✨ AI Improve Resume"}
+              </button>
+            </div>
           </div>
         )}
 

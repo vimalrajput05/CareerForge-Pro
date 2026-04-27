@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-
 const JDAnalysis = ({ setCurrentPage, setJdAnalyses }) => {
   const [jd, setJd] = useState("");
   const [keywords, setKeywords] = useState([]);
@@ -14,74 +11,37 @@ const JDAnalysis = ({ setCurrentPage, setJdAnalyses }) => {
 
   const handleAnalyze = async () => {
     if (!jd.trim()) {
-      alert("Please paste Job Description");
-      return;
+      alert("Please paste Job Description")
+      return
     }
-
-    if (!GROQ_API_KEY) {
-      setError("Groq API key is missing. Please set VITE_GROQ_API_KEY in your .env file.");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    setKeywords([]);
-    setSkills([]);
-    setExperience("");
-
     try {
-      const response = await fetch(GROQ_API_URL, {
+      setLoading(true)
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${GROQ_API_KEY}`,
+          "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
         },
         body: JSON.stringify({
           model: "llama3-8b-8192",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a job description analyzer. Extract structured information from the provided job description. Return ONLY a valid JSON object with no markdown formatting, no code blocks, and no extra text. The JSON must have exactly these keys: keywords (array of 10-15 important keywords as strings), skills (array of technical and soft skills as strings), experience (string describing required experience like '3+ years'), and summary (string with a brief 2-3 sentence summary of the role).",
-            },
-            {
-              role: "user",
-              content: `Analyze this job description and return structured JSON:\n\n${jd}`,
-            },
-          ],
-          temperature: 0.3,
-          max_tokens: 1024,
-        }),
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error?.message || `Groq API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || "";
-
-      // Parse JSON from response
-      let parsed;
-      try {
-        // Try to extract JSON if wrapped in markdown code blocks
-        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-        const jsonString = jsonMatch ? jsonMatch[1].trim() : content.trim();
-        parsed = JSON.parse(jsonString);
-      } catch (parseErr) {
-        console.error("Failed to parse Groq response:", content);
-        throw new Error("Failed to parse AI response. Please try again.");
-      }
-
-      setKeywords(Array.isArray(parsed.keywords) ? parsed.keywords : []);
-      setSkills(Array.isArray(parsed.skills) ? parsed.skills : []);
-      setExperience(parsed.experience || "Not mentioned");
+          messages: [{
+            role: "user",
+            content: `Analyze this job description and return ONLY a JSON object with no extra text:\n{\n  "keywords": ["top 10 important keywords"],\n  "skills": ["technical skills found"],\n  "experience": "experience requirement like 2 years or Not mentioned"\n}\n\nJob Description: ${jd}`
+          }],
+          max_tokens: 500
+        })
+      })
+      const data = await response.json()
+      const text = data.choices[0].message.content
+      const clean = text.replace(/```json|```/g, "").trim()
+      const parsed = JSON.parse(clean)
+      setKeywords(parsed.keywords || [])
+      setSkills(parsed.skills || [])
+      setExperience(parsed.experience || "Not mentioned")
     } catch (err) {
-      console.error("JD Analysis error:", err);
-      setError(err.message || "Failed to analyze job description. Please try again.");
+      alert("Analysis failed. Check your VITE_GROQ_API_KEY in .env file.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   };
 
@@ -155,12 +115,13 @@ const JDAnalysis = ({ setCurrentPage, setJdAnalyses }) => {
             >
               {loading ? (
                 <>
-                  <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                  </svg>
                   Analyzing...
                 </>
-              ) : (
-                "Analyze JD"
-              )}
+              ) : "Analyze JD"}
             </button>
 
             <button

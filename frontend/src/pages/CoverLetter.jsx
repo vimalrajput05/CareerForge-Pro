@@ -7,45 +7,37 @@ const CoverLetter = ({ setCurrentPage, setCoverLetters }) => {
   const [position, setPosition] = useState("");
   const [yourName, setYourName] = useState("");
   const [generatedLetter, setGeneratedLetter] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleGenerateLetter = () => {
+  const handleGenerateLetter = async () => {
     if (!jobDescription.trim() || !companyName.trim() || !position.trim() || !yourName.trim()) {
-      alert("Please fill in all fields");
-      return;
+      alert("Please fill in all fields")
+      return
     }
-
-    // Extract key skills from job description
-    const jdText = jobDescription.toLowerCase();
-    const skillKeywords = [
-      "communication",
-      "leadership",
-      "problem-solving",
-      "teamwork",
-      "creativity",
-      "innovation",
-      "technical",
-      "management",
-      "collaboration",
-      "strategic",
-    ];
-
-    const matchedSkills = skillKeywords.filter((skill) => jdText.includes(skill));
-
-    // Generate cover letter
-    const letter = `Dear Hiring Manager,
-
-I am writing to express my strong interest in the ${position} position at ${companyName}. With my professional background and passion for excellence, I am confident that I would be a valuable addition to your team.
-
-In my career, I have developed expertise in several key areas mentioned in your job description, including ${matchedSkills.length > 0 ? matchedSkills.slice(0, 3).join(", ") : "cross-functional collaboration and project management"}. I am particularly drawn to this role because of your company's commitment to innovation and excellence, values that align closely with my own professional philosophy.
-
-Throughout my experience, I have consistently demonstrated the ability to deliver results, take initiative, and contribute meaningfully to team success. I am excited about the opportunity to bring these skills and my enthusiasm to ${companyName}, and I am confident that together we can achieve great things.
-
-Thank you for considering my application. I would welcome the opportunity to discuss how my background, skills, and passion make me an excellent fit for this position. I look forward to hearing from you.
-
-Sincerely,
-${yourName}`;
-
-    setGeneratedLetter(letter);
+    try {
+      setLoading(true)
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "llama3-8b-8192",
+          messages: [{
+            role: "user",
+            content: `Write a professional cover letter for the following:\nName: ${yourName}\nPosition: ${position}\nCompany: ${companyName}\nJob Description: ${jobDescription}\n\nWrite a compelling 3 paragraph cover letter. Return only the letter text, no subject line, no extra explanation.`
+          }],
+          max_tokens: 800
+        })
+      })
+      const data = await response.json()
+      setGeneratedLetter(data.choices[0].message.content)
+    } catch (err) {
+      alert("Generation failed. Check your VITE_GROQ_API_KEY in .env file.")
+    } finally {
+      setLoading(false)
+    }
   };
 
   const handleSaveToDashboard = () => {
@@ -141,9 +133,18 @@ ${yourName}`;
 
               <button
                 onClick={handleGenerateLetter}
-                className="w-full px-5 py-3 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700 transition-all active:scale-95"
+                disabled={loading}
+                className="w-full px-5 py-3 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Generate Cover Letter
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    </svg>
+                    Generating...
+                  </>
+                ) : "Generate Cover Letter"}
               </button>
             </div>
           </div>
