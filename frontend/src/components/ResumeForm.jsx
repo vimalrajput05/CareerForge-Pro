@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function ResumeForm({
   resumeData,
   setResumeData,
@@ -7,6 +9,8 @@ function ResumeForm({
   isPro,
   setCurrentPage,
 }) {
+  const [improvingField, setImprovingField] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setResumeData({ ...resumeData, [name]: value });
@@ -20,6 +24,38 @@ function ResumeForm({
     }
 
     handleDownloadPDF();
+  };
+
+  const handleAIImprove = async (fieldName, fieldValue) => {
+    if (!fieldValue.trim()) {
+      alert("Please add some content first before improving.");
+      return;
+    }
+    try {
+      setImprovingField(fieldName);
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "llama3-8b-8192",
+          messages: [{
+            role: "user",
+            content: `Rewrite this resume ${fieldName} section to sound more professional and impactful. Keep it concise. Return only the rewritten text, no explanation:\n\n${fieldValue}`
+          }],
+          max_tokens: 500
+        })
+      });
+      const data = await response.json();
+      const improved = data.choices[0].message.content;
+      setResumeData({ ...resumeData, [fieldName]: improved });
+    } catch (err) {
+      alert("AI improve failed. Check your VITE_GROQ_API_KEY in .env file.");
+    } finally {
+      setImprovingField(null);
+    }
   };
 
   const inputClass =
@@ -212,6 +248,17 @@ function ResumeForm({
               onChange={handleChange}
               className={textareaClass}
             />
+
+            {(name === "skills" || name === "experience") && (
+              <button
+                type="button"
+                onClick={() => handleAIImprove(name, resumeData[name])}
+                disabled={improvingField === name}
+                className="mt-2 w-full rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2 text-sm font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {improvingField === name ? "Improving with AI..." : `✨ AI Improve ${label}`}
+              </button>
+            )}
           </div>
         ))}
 

@@ -22,51 +22,93 @@ const ATSScore = ({ setCurrentPage, setAtsScores }) => {
   const [matchedKeywords, setMatchedKeywords] = useState([]);
   const [missingKeywords, setMissingKeywords] = useState([]);
   const [analysis, setAnalysis] = useState("");
+  const [calculating, setCalculating] = useState(false);
+  const [improvement, setImprovement] = useState("");
 
   const extractTextFromPDF = async (file) => {
-    const data = await file.arrayBuffer();
-    const uint8array = new Uint8Array(data);
-    let str = "";
-
-    for (let i = 0; i < uint8array.length; i++) {
-      str += String.fromCharCode(uint8array[i]);
-    }
-
-    const matches = str.match(/BT[\s\S]*?ET/g) || [];
-    let extractedText = "";
-
-    matches.forEach((block) => {
-      const parts = block.match(/\(([^)]+)\)/g) || [];
-      parts.forEach((part) => {
-        extractedText += part.slice(1, -1) + " ";
-      });
-    });
-
-    const readable =
-      extractedText.trim().length > 0
+    try {
+      const pdfjsLib = await import("pdfjs-dist")
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        "pdfjs-dist/build/pdf.worker.min.mjs",
+        import.meta.url
+      ).toString()
+      const arrayBuffer = await file.arrayBuffer()
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+      let fullText = ""
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i)
+        const textContent = await page.getTextContent()
+        const pageText = textContent.items.map(item => item.str).join(" ")
+        fullText += pageText + "\n"
+      }
+      return fullText.trim()
+    } catch (err) {
+      const data = await file.arrayBuffer()
+      const uint8array = new Uint8Array(data)
+      let str = ""
+      for (let i = 0; i < uint8array.length; i++) {
+        str += String.fromCharCode(uint8array[i])
+      }
+      const matches = str.match(/BT[\s\S]*?ET/g) || []
+      let extractedText = ""
+      matches.forEach((block) => {
+        const parts = block.match(/\(([^)]+)\)/g) || []
+        parts.forEach((part) => { extractedText += part.slice(1, -1) + " " })
+      })
+      return extractedText.trim().length > 0
         ? extractedText
-        : str.replace(/[^a-zA-Z0-9\s.,@:/+-]/g, " ");
-
-    return readable.trim();
+        : str.replace(/[^a-zA-Z0-9\s.,@:/+-]/g, " ").trim()
+    }
   };
 
   const extractText = async (file) => {
-    if (!file) return "";
-
-    if (file.type === "text/plain") {
-      return await file.text();
+    if (!file) return ""
+    if (file.type === "text/plain") return await file.text()
+    if (file.type === "application/pdf") return await extractTextFromPDF(file)
+    if (file.type.startsWith("image/")) {
+      try {
+        setExtracting(true)
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result.split(",")[1])
+          reader.readAsDataURL(file)
+        })
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "llama-3.2-11b-vision-preview",
+            messages: [{
+              role: "user",
+              content: [
+                { type: "image_url", image_url: { url: `data:${file.type};base64,${base64}` }},
+                { type: "text", text: "Extract all text from this resume image exactly as written. Return only the extracted text, nothing else." }
+              ]
+            }],
+            max_tokens: 1000
+          })
+        })
+        const data = await response.json()
+        return data.choices[0].message.content
+      } catch (err) {
+        alert("Image extraction failed. Please paste your resume text manually.")
+        return ""
+      } finally {
+        setExtracting(false)
+      }
     }
-
-    if (file.type === "application/pdf") {
-      return await extractTextFromPDF(file);
-    }
-
-    return "";
+    return ""
   };
 
-  const calculateATSScore = () => {
+  const calculateATSScore = async () => {
+    setCalculating(true);
+
     if (!resume.trim() || !jobDescription.trim()) {
       alert("Please enter both resume and job description.");
+      setCalculating(false);
       return;
     }
 
@@ -139,6 +181,14 @@ const ATSScore = ({ setCurrentPage, setAtsScores }) => {
       );
     }
 
+    if (finalScore < 50) {
+      setImprovement(`Your resume is missing many key terms. Add these missing keywords naturally into your experience and skills sections: ${missing.slice(0, 5).join(", ")}`)
+    } else if (finalScore < 75) {
+      setImprovement(`Good match! Strengthen your resume by adding these keywords: ${missing.slice(0, 3).join(", ")}`)
+    } else {
+      setImprovement("Excellent match! Your resume is well optimized for this job.")
+    }
+
     if (setAtsScores) {
       setAtsScores((prev) => [
         ...prev,
@@ -148,6 +198,8 @@ const ATSScore = ({ setCurrentPage, setAtsScores }) => {
         },
       ]);
     }
+
+    setCalculating(false);
   };
 
   return (
@@ -314,9 +366,17 @@ const ATSScore = ({ setCurrentPage, setAtsScores }) => {
 
               <button
                 onClick={calculateATSScore}
-                className="mt-6 w-full rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-purple-300/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                disabled={calculating}
+                className="mt-6 w-full rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-purple-300/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
-                Calculate ATS Score
+                {calculating ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Calculating...
+                  </>
+                ) : (
+                  "Calculate ATS Score"
+                )}
               </button>
             </div>
           </div>
@@ -397,6 +457,16 @@ const ATSScore = ({ setCurrentPage, setAtsScores }) => {
                         <p className="text-sm text-slate-600 leading-relaxed">
                           {analysis}
                         </p>
+                      </div>
+                    )}
+
+                    {improvement && (
+                      <div className="rounded-2xl bg-blue-50 p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sparkles className="h-5 w-5 text-blue-600" />
+                          <p className="font-bold text-blue-700">How to Improve</p>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">{improvement}</p>
                       </div>
                     )}
                   </div>
