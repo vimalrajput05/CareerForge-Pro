@@ -32,6 +32,7 @@ export function ResumeProvider({ children }) {
 
   const value = {
     resumeData,
+    setResumeData,
     updateResumeField,
     resetResume,
   };

@@ -1,22 +1,11 @@
-import { useState } from "react";
 import Navbar from "../components/Navbar";
 import ResumeForm from "../components/ResumeForm";
 import ResumePreview from "../components/ResumePreview";
+import { useResume } from "../context/ResumeContext";
 
 function ResumeBuilder({ setCurrentPage, mode = "create", isPro }) {
-  const [resumeData, setResumeData] = useState({
-    template: "template1",
-    name: "",
-    role: "",
-    email: "",
-    phone: "",
-    address: "",
-    skills: "",
-    experience: "",
-    projects: "",
-    certifications: "",
-    profilePic: "",
-  });
+  const { resumeData, setResumeData } = useResume();
+
   const handleDownloadPDF = () => {
     const element = document.getElementById("resume-preview");
 
@@ -89,8 +78,6 @@ function ResumeBuilder({ setCurrentPage, mode = "create", isPro }) {
       return;
     }
 
-    // For demo purposes, we'll create a simple text file
-    // In a real app, this would generate a proper .docx file
     const content = `
 ${resumeData.name || "Your Name"}
 ${resumeData.role || "Your Role"}
