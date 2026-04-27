@@ -6,7 +6,7 @@ function Login({ setCurrentPage, setIsAuthenticated }) {
     e.preventDefault();
     // Fake login - in real app, call API here
     setIsAuthenticated(true);
-    localStorage.setItem('careerforge_auth', 'true');
+    localStorage.setItem('isAuthenticated', 'true');
     setCurrentPage('dashboard');
   };
 

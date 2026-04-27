@@ -10,24 +10,26 @@ import Pricing from "./pages/Pricing";
 import { Toaster } from "react-hot-toast";
 import React, { useState, useEffect } from "react";
 import CreateAccount from "./pages/CreateAccount";
+import { ResumeProvider } from "./context/ResumeContext";
 
 
 
 function App() {
-  <Toaster position="top-right" reverseOrder={false} />
-
-  {/* your existing pages */}
   const [currentPage, setCurrentPage] = useState(() => {
-  return localStorage.getItem("currentPage") || "home";
-});
-useEffect(() => {
-  localStorage.setItem("currentPage", currentPage);
-}, [currentPage]);
+    return localStorage.getItem("currentPage") || "home";
+  });
+  useEffect(() => {
+    localStorage.setItem("currentPage", currentPage);
+  }, [currentPage]);
+
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
   const [isPro, setIsPro] = useState(() => {
     return localStorage.getItem('isPro') === 'true';
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem("isAuthenticated") === "true";
   });
 
   // --- GLOBAL DATA STATE ---
@@ -56,7 +58,7 @@ useEffect(() => {
     const file = new Blob([content || "CareerForge Pro Document Content"], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = filename ? `${filename.split('.')[0]}.txt` : "document.txt";
-    document.body.appendChild(element); 
+    document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
   };
@@ -82,34 +84,36 @@ useEffect(() => {
   };
 
   return (
+    <ResumeProvider>
+      <Toaster position="top-right" reverseOrder={false} />
       <div className={isDark ? "dark" : ""}>
         {currentPage === "home" && (
-          <Home 
+          <Home
             setCurrentPage={setCurrentPage}
             isPro={isPro}
           />
         )}
-        
+
         {currentPage === "builder" && (
-          <Builder 
-            setCurrentPage={setCurrentPage} 
+          <Builder
+            setCurrentPage={setCurrentPage}
             setCoverLetters={setCoverLetters}
             isPro={isPro}
           />
         )}
-        
+
         {currentPage === "resume" && (
-          <ResumeBuilder 
-            setCurrentPage={setCurrentPage} 
+          <ResumeBuilder
+            setCurrentPage={setCurrentPage}
             setResumes={setResumes}
             isPro={isPro}
           />
         )}
 
         {currentPage === "improve-resume" && (
-          <ResumeBuilder 
-            setCurrentPage={setCurrentPage} 
-            setResumes={setResumes} 
+          <ResumeBuilder
+            setCurrentPage={setCurrentPage}
+            setResumes={setResumes}
             mode="improve"
             isPro={isPro}
           />
@@ -145,8 +149,8 @@ useEffect(() => {
         )}
 
         {currentPage === "dashboard" && (
-          <Dashboard 
-            setCurrentPage={setCurrentPage} 
+          <Dashboard
+            setCurrentPage={setCurrentPage}
             onDownload={handleDownload}
             resumes={resumes}
             setResumes={setResumes}
@@ -162,13 +166,16 @@ useEffect(() => {
         )}
 
         {currentPage === "login" && (
-          <Login setCurrentPage={setCurrentPage} />
+          <Login
+            setCurrentPage={setCurrentPage}
+            setIsAuthenticated={setIsAuthenticated}
+          />
         )}
         {currentPage === "signup" && (
-  <CreateAccount setCurrentPage={setCurrentPage} />
-)}
+          <CreateAccount setCurrentPage={setCurrentPage} />
+        )}
       </div>
-    
+    </ResumeProvider>
   );
 }
 
