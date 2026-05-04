@@ -6,70 +6,84 @@ import { useResume } from "../context/ResumeContext";
 function ResumeBuilder({ setCurrentPage, mode = "create", isPro }) {
   const { resumeData, setResumeData } = useResume();
 
-  const handleDownloadPDF = () => {
-    const element = document.getElementById("resume-preview");
+const handleDownloadPDF = async () => {
+  const element = document.getElementById("resume-preview");
+  if (!element) {
+    alert("Preview not found");
+    return;
+  }
 
-    if (!element) {
-      alert("Preview not found");
-      return;
-    }
+  try {
+    const styles = Array.from(
+      document.querySelectorAll('style, link[rel="stylesheet"]')
+    )
+      .map((node) => node.outerHTML)
+      .join("");
 
+    const html = `
+      <html>
+        <head>
+          <title>Resume</title>
+          ${styles}
+          <style>
+            body { margin: 0; padding: 24px; background: white !important; }
+            #resume-preview { width: 100%; max-width: 800px; margin: 0 auto; background: white !important; box-shadow: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size: A4; margin: 12mm; }
+          </style>
+        </head>
+        <body>${element.outerHTML}</body>
+      </html>`;
+
+    const response = await fetch("http://localhost:5000/api/pdf/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ html })
+    });
+
+    if (!response.ok) throw new Error("Backend PDF failed");
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${resumeData.name || "resume"}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.warn("Backend not available, using print fallback");
     const printWindow = window.open("", "_blank", "width=900,height=1200");
-
     if (!printWindow) {
       alert("Popup blocked. Please allow popups.");
       return;
     }
-
-    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-      .map((node) => node.outerHTML)
-      .join("");
-
+    const el = document.getElementById("resume-preview");
+    const styles = Array.from(
+      document.querySelectorAll('style, link[rel="stylesheet"]')
+    ).map((n) => n.outerHTML).join("");
     printWindow.document.write(`
       <html>
         <head>
           <title>Resume PDF</title>
           ${styles}
           <style>
-            body {
-              margin: 0;
-              padding: 24px;
-              background: white !important;
-            }
-
-            #resume-preview {
-              width: 100%;
-              max-width: 800px;
-              margin: 0 auto;
-              background: white !important;
-              box-shadow: none !important;
-            }
-
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-
-            @page {
-              size: A4;
-              margin: 12mm;
-            }
+            body { margin: 0; padding: 24px; background: white !important; }
+            @page { size: A4; margin: 12mm; }
           </style>
         </head>
-        <body>
-          ${element.outerHTML}
-        </body>
-      </html>
-    `);
-
+        <body>${el.outerHTML}</body>
+      </html>`);
     printWindow.document.close();
-
     setTimeout(() => {
       printWindow.focus();
       printWindow.print();
       printWindow.close();
     }, 700);
-  };
+  }
+};
 
   const handleDownloadWord = () => {
     if (!isPro) {
