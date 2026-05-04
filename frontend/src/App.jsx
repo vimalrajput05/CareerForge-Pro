@@ -22,6 +22,20 @@ function App() {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "success") {
+      setIsPro(true);
+      localStorage.setItem("isPro", "true");
+      alert("🎉 Payment successful! Pro features unlocked.");
+      window.history.replaceState({}, "", "/");
+    }
+    if (params.get("payment") === "cancel") {
+      alert("Payment cancelled. You can upgrade anytime.");
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
+
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });

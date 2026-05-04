@@ -119,6 +119,27 @@ const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
     }
   };
 
+  const handleUpgrade = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/stripe/create-checkout-session",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Payment setup failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Stripe error:", err);
+      alert("Could not connect to payment server. Make sure backend is running on port 5000.");
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-all duration-300">
       {/* Background glow */}
@@ -469,9 +490,7 @@ const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
 
                 <button
                   onClick={() => {
-                    upgradeToPro();
-                    setShowPaymentModal(false);
-                    setCurrentPage("dashboard");
+                    handleUpgrade();
                   }}
                   className="flex-1 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 py-3 font-black text-white shadow-lg transition hover:scale-[1.02] active:scale-95"
                 >
