@@ -23,7 +23,7 @@ const CoverLetter = ({ setCurrentPage, setCoverLetters }) => {
           "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "llama-3.3-70b-versatile",
           messages: [{
             role: "user",
             content: `Write a professional cover letter for the following:\nName: ${yourName}\nPosition: ${position}\nCompany: ${companyName}\nJob Description: ${jobDescription}\n\nWrite a compelling 3 paragraph cover letter. Return only the letter text, no subject line, no extra explanation.`

@@ -43,7 +43,7 @@ function ResumeForm({
           "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "llama-3.3-70b-versatile",
           messages: [{
             role: "user",
             content: `Rewrite this resume ${fieldName} section to sound more professional and impactful. Keep it concise. Return only the rewritten text, no explanation:\n\n${fieldValue}`
@@ -75,7 +75,7 @@ function ResumeForm({
           "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "llama-3.3-70b-versatile",
           messages: [{
             role: "user",
             content: `You are a professional resume editor. Improve this resume and extract fields. Return ONLY a JSON object with no extra text:\n{\n  "name": "",\n  "role": "",\n  "email": "",\n  "phone": "",\n  "address": "",\n  "skills": "",\n  "experience": "",\n  "projects": "",\n  "certifications": ""\n}\n\nResume: ${pastedResume}`

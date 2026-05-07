@@ -12,13 +12,24 @@ router.post("/generate", async (req, res) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    // Set viewport to A4 size
+    await page.setViewport({ width: 794, height: 1123 });
+
+    await page.setContent(html, { waitUntil: "networkidle0", timeout: 30000 });
+
+    // Extra wait for Tailwind CDN to apply styles
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     const pdf = await page.pdf({
       format: "A4",
       margin: { top: "12mm", bottom: "12mm", left: "12mm", right: "12mm" },
-      printBackground: true
+      printBackground: true,
+      preferCSSPageSize: true
     });
+
     await browser.close();
+
     res.set({
       "Content-Type": "application/pdf",
       "Content-Disposition": "attachment; filename=resume.pdf"

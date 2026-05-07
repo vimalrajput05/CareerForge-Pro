@@ -15,6 +15,7 @@ import { ResumeProvider } from "./context/ResumeContext";
 
 
 function App() {
+  console.log("GROQ KEY:", import.meta.env.VITE_GROQ_API_KEY)
   const [currentPage, setCurrentPage] = useState(() => {
     return localStorage.getItem("currentPage") || "home";
   });

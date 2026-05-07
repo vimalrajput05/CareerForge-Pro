@@ -567,27 +567,31 @@ function Dashboard({
 
             <div className="space-y-4">
               <AnimatePresence mode="popLayout">{renderList()}</AnimatePresence>
-            </div>
 
-            {isEmpty && (
-              <div className="mt-4 rounded-[1.75rem] border-2 border-dashed border-violet-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 py-16 px-6 text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/20 text-3xl">
-                  📂
+              {resumes.length === 0 && activeTab === "resumes" && (
+                <div className="mt-4 rounded-[1.75rem] border-2 border-dashed border-violet-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 py-16 px-6 text-center">
+                  <p className="text-4xl mb-3">📄</p>
+                  <p className="font-semibold">No resumes yet</p>
+                  <p className="text-sm mt-1">Create your first resume to see it here</p>
                 </div>
-                <h3 className="text-xl font-black text-gray-900 dark:text-white">
-                  Nothing here yet
-                </h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  Start building your resume or create a new analysis to see items here.
-                </p>
-                <button
-                  onClick={() => setCurrentPage("builder")}
-                  className="mt-6 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 py-3 font-bold text-white shadow-lg hover:scale-105 transition"
-                >
-                  Create Resume
-                </button>
-              </div>
-            )}
+              )}
+
+              {coverLetters.length === 0 && activeTab === "letters" && (
+                <div className="mt-4 rounded-[1.75rem] border-2 border-dashed border-violet-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 py-16 px-6 text-center">
+                  <p className="text-4xl mb-3">✉️</p>
+                  <p className="font-semibold">No cover letters yet</p>
+                  <p className="text-sm mt-1">Generate a cover letter to see it here</p>
+                </div>
+              )}
+
+              {jdAnalyses.length === 0 && activeTab === "jd" && (
+                <div className="mt-4 rounded-[1.75rem] border-2 border-dashed border-violet-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 py-16 px-6 text-center">
+                  <p className="text-4xl mb-3">🔍</p>
+                  <p className="font-semibold">No JD analyses yet</p>
+                  <p className="text-sm mt-1">Analyze a job description to see results here</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right Sidebar */}

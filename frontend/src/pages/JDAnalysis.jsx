@@ -23,7 +23,8 @@ const JDAnalysis = ({ setCurrentPage, setJdAnalyses }) => {
           "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "llama-3.3-70b-versatile",
+
           messages: [{
             role: "user",
             content: `Analyze this job description and return ONLY a JSON object with no extra text:\n{\n  "keywords": ["top 10 important keywords"],\n  "skills": ["technical skills found"],\n  "experience": "experience requirement like 2 years or Not mentioned"\n}\n\nJob Description: ${jd}`

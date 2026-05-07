@@ -4,16 +4,15 @@ An AI-powered Resume Builder SaaS built with React, Vite, and Tailwind CSS. Care
 
 ---
 
-## 📂 Project Structure
+## 💢 Project Structure
 
 CareerForge-Pro/
-│
 ├── frontend/        # React Frontend (Vite + Tailwind CSS)
-├── backend/         # Backend (Coming Soon)
+└── backend/         # Backend (Coming Soon)
 
 ---
 
-## 🛠️ Tech Stack
+## 🧠 Tech Stack
 
 - React.js
 - Vite
@@ -82,18 +81,41 @@ Now run npm run dev and all AI features will work automatically.
 
 ---
 
+## 🖥️ Backend Setup (Optional — for Puppeteer PDF)
+
+# Go to backend folder
+cd backend
+
+# Install dependencies
+npm install
+
+# Create backend/.env file with:
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+
+# Run backend
+npm run dev
+
+Backend runs on http://localhost:5000
+If backend is not running, PDF download uses browser print as fallback automatically.
+
+---
+
 ## ✨ Features
 
-- 🧠 AI Resume Builder with Live Preview
-- 🎨 4 Professional Resume Templates
+- 🤖 AI Resume Builder with Live Preview
+- 🧘‍♂️ 4 Professional Resume Templates
 - ✨ AI Improve button for Skills and Experience sections
 - 📄 Improve Existing Resume using AI (paste your old resume)
 - 📊 ATS Score Checker with How to Improve suggestions
 - 📁 PDF and Image Resume Upload with text extraction
 - 🔍 JD Analysis — AI powered keyword extraction
 - 📝 AI Cover Letter Generator
-- 📂 Dashboard to manage all resumes and cover letters
-- 📥 Download Resume as PDF
+- 🗂️ Dashboard to manage all resumes and cover letters
+- 📨 Download Resume as PDF
 
 ---
+
+
+
 
