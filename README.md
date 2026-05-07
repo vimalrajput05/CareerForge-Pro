@@ -1,121 +1,234 @@
 # 🚀 CareerForge Pro
 
-An AI-powered Resume Builder SaaS built with React, Vite, and Tailwind CSS. CareerForge Pro helps users create professional resumes, optimize for ATS systems, generate cover letters, and improve existing resumes using AI.
+An AI-powered full-stack Resume Builder SaaS built with React, Vite, Node.js, Express, Docker, and Tailwind CSS.
+
+CareerForge Pro helps users create professional resumes, optimize resumes for ATS systems, generate AI-powered cover letters, analyze job descriptions, and improve existing resumes using AI.
 
 ---
 
-## 💢 Project Structure
+# 📁 Project Structure
 
+```bash
 CareerForge-Pro/
 ├── frontend/        # React Frontend (Vite + Tailwind CSS)
-└── backend/         # Backend (Coming Soon)
+├── backend/         # Node.js + Express Backend
+├── docker-compose.yml
+├── README.md
+```
 
 ---
 
-## 🧠 Tech Stack
+# 🧠 Tech Stack
 
+## Frontend
 - React.js
 - Vite
 - Tailwind CSS
 - JavaScript
-- Groq AI API (llama3-8b-8192)
-- Context API (State Management)
+- Context API
+
+## Backend
+- Node.js
+- Express.js
+- Puppeteer
+
+## AI Integration
+- Groq AI API (llama-3.3-70b-versatile)
+
+## DevOps
+- Docker
+- Docker Hub
 
 ---
 
-## ⚙️ Setup Instructions
+# ⚙️ Local Setup Instructions
 
-Follow these steps to run the project locally:
+## 1️⃣ Clone Repository
 
-# Clone the repository
+```bash
 git clone https://github.com/vimalrajput05/CareerForge-Pro.git
+```
 
-# Go to project folder
+```bash
 cd CareerForge-Pro
+```
 
-# Open in VS Code
-code .
+---
 
-# Go to frontend
+# 🖥️ Frontend Setup
+
+```bash
 cd frontend
+```
 
-# Install dependencies
+```bash
 npm install
+```
 
-# Run project
+```bash
 npm run dev
+```
+
+Frontend runs on:
+
+```bash
+http://localhost:5173
+```
 
 ---
 
-## 🔑 Groq API Key Setup (Required for AI Features)
+# ⚡ Backend Setup
 
-This project uses Groq AI API which is completely FREE — no credit card required.
+Open another terminal:
 
-### Step 1 — Get your free Groq API Key:
-1. Open https://console.groq.com in your browser
-2. Click "Sign Up" and login with your Google account
-3. After login, click "API Keys" in the left sidebar
-4. Click "Create API Key" button
-5. Give it any name like careerforge-key and click Submit
-6. Copy the key shown — it starts with gsk_
-7. Save it safely — it is shown only once
-
-### Step 2 — Create .env file in frontend folder:
-1. Open the project in VS Code
-2. Go to the frontend/ folder
-3. Create a new file named exactly: .env
-4. Add this single line inside the file:
-
-VITE_GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxx
-
-5. Replace gsk_xxxxxxxxxxxxxxxx with your actual copied key
-6. Save the file
-
-### Step 3 — Run the project:
-Now run npm run dev and all AI features will work automatically.
-
-### ⚠️ Important Notes:
-- The .env file is already in .gitignore — it will NOT be pushed to GitHub
-- Never share your API key publicly
-- Without this key, AI features will show an error alert
-
----
-
-## 🖥️ Backend Setup (Optional — for Puppeteer PDF)
-
-# Go to backend folder
+```bash
 cd backend
+```
 
-# Install dependencies
+```bash
 npm install
+```
 
-# Create backend/.env file with:
+Create `.env` file inside backend folder:
+
+```env
 PORT=5000
 FRONTEND_URL=http://localhost:5173
+```
 
-# Run backend
+Run backend:
+
+```bash
 npm run dev
+```
 
-Backend runs on http://localhost:5000
-If backend is not running, PDF download uses browser print as fallback automatically.
+Backend runs on:
+
+```bash
+http://localhost:5000
+```
 
 ---
 
-## ✨ Features
+# 🔑 Groq API Key Setup
 
-- 🤖 AI Resume Builder with Live Preview
-- 🧘‍♂️ 4 Professional Resume Templates
-- ✨ AI Improve button for Skills and Experience sections
-- 📄 Improve Existing Resume using AI (paste your old resume)
-- 📊 ATS Score Checker with How to Improve suggestions
-- 📁 PDF and Image Resume Upload with text extraction
-- 🔍 JD Analysis — AI powered keyword extraction
+This project uses Groq AI API for AI-powered resume features.
+
+## Step 1 — Get Free API Key
+
+Open:
+
+https://console.groq.com
+
+- Sign up using Google
+- Go to API Keys
+- Create API Key
+- Copy the key starting with `gsk_`
+
+---
+
+## Step 2 — Create `.env` File in Frontend
+
+Inside `frontend/` folder create:
+
+```env
+VITE_GROQ_API_KEY=gsk_xxxxxxxxxxxxx
+```
+
+Replace with your actual API key.
+
+---
+
+# 🐳 Docker Setup
+
+This project is fully containerized using Docker.
+
+## Build Containers
+
+Run from root folder:
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Docker Containers
+
+### Frontend Container
+Runs on:
+
+```bash
+http://localhost:5173
+```
+
+### Backend Container
+Runs on:
+
+```bash
+http://localhost:5000
+```
+
+---
+
+# 🐳 Docker Hub Images
+
+## Frontend Image
+
+```bash
+docker pull vimalrajput0195/careerforge-frontend
+```
+
+Run:
+
+```bash
+docker run -p 5173:5173 vimalrajput0195/careerforge-frontend
+```
+
+---
+
+## Backend Image
+
+```bash
+docker pull vimalrajput0195/careerforge-backend
+```
+
+Run:
+
+```bash
+docker run -p 5000:5000 vimalrajput0195/careerforge-backend
+```
+
+---
+
+# ✨ Features
+
+- 🤖 AI Resume Builder
+- 📄 AI Resume Improver
+- 📊 ATS Score Checker
 - 📝 AI Cover Letter Generator
-- 🗂️ Dashboard to manage all resumes and cover letters
-- 📨 Download Resume as PDF
+- 🔍 AI Job Description Analysis
+- 📁 PDF & Image Resume Upload
+- 🧠 AI Keyword Suggestions
+- 🎨 Multiple Professional Resume Templates
+- 👀 Live Resume Preview
+- 📥 Resume PDF Download
+- 🗂️ Resume Dashboard
+- 🐳 Dockerized Full-Stack Application
+
+---
+
+# 🚀 Deployment Ready
+
+- Dockerized Application
+- Docker Hub Support
+- Portable Containers
+- Production Ready Structure
 
 ---
 
 
+Docker Hub:
+https://hub.docker.com/u/vimalrajput0195
 
-
+---
