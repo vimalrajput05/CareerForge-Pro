@@ -30,6 +30,17 @@ const handleDownloadPDF = async () => {
             #resume-preview { width: 100%; max-width: 800px; margin: 0 auto; background: white !important; box-shadow: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             @page { size: A4; margin: 12mm; }
+
+            @media print {
+              body { margin: 0; }
+              #resume-preview {
+                page-break-inside: avoid;
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+              }
+              .no-print { display: none !important; }
+            }
           </style>
         </head>
         <body>${element.outerHTML}</body>
@@ -72,6 +83,17 @@ const handleDownloadPDF = async () => {
           <style>
             body { margin: 0; padding: 24px; background: white !important; }
             @page { size: A4; margin: 12mm; }
+
+            @media print {
+              body { margin: 0; }
+              #resume-preview {
+                page-break-inside: avoid;
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+              }
+              .no-print { display: none !important; }
+            }
           </style>
         </head>
         <body>${el.outerHTML}</body>

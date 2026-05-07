@@ -23,18 +23,24 @@ function App() {
   }, [currentPage]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("payment") === "success") {
-      setIsPro(true);
-      localStorage.setItem("isPro", "true");
-      alert("🎉 Payment successful! Pro features unlocked.");
-      window.history.replaceState({}, "", "/");
-    }
-    if (params.get("payment") === "cancel") {
-      alert("Payment cancelled. You can upgrade anytime.");
-      window.history.replaceState({}, "", "/");
-    }
-  }, []);
+    const pageTitles = {
+      home: "CareerForge Pro",
+      builder: "Builder — CareerForge Pro",
+      resume: "Resume Builder — CareerForge Pro",
+      "improve-resume": "Improve Resume — CareerForge Pro",
+      "jd-analysis": "JD Analysis — CareerForge Pro",
+      "ats-score": "ATS Score — CareerForge Pro",
+      "cover-letter": "Cover Letter — CareerForge Pro",
+      dashboard: "Dashboard — CareerForge Pro",
+      pricing: "Pricing — CareerForge Pro",
+      login: "Login — CareerForge Pro",
+    };
+    document.title = pageTitles[currentPage] || "CareerForge Pro";
+  }, [currentPage]);
+
+
+
+
 
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');

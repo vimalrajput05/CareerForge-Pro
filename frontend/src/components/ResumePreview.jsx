@@ -72,7 +72,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
           </div>
 
           <div className="flex-1 p-4 lg:p-7 space-y-5">
-            <div>
+            <div className="break-inside-avoid">
               <p
                 className={`${sectionTitle} text-violet-700 border-violet-200`}
               >
@@ -81,7 +81,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
               <p className={sectionText}>{EX}</p>
             </div>
 
-            <div>
+            <div className="break-inside-avoid">
               <p
                 className={`${sectionTitle} text-violet-700 border-violet-200`}
               >
@@ -90,7 +90,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
               <p className={sectionText}>{PR}</p>
             </div>
 
-            <div>
+            <div className="break-inside-avoid">
               <p
                 className={`${sectionTitle} text-violet-700 border-violet-200`}
               >
@@ -147,7 +147,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
               <p className={sectionText}>{SK}</p>
             </div>
 
-            <div>
+            <div className="break-inside-avoid">
               <p
                 className={`${sectionTitle} text-slate-700 border-slate-200`}
               >
@@ -156,7 +156,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
               <p className={sectionText}>{EX}</p>
             </div>
 
-            <div>
+            <div className="break-inside-avoid">
               <p
                 className={`${sectionTitle} text-slate-700 border-slate-200`}
               >
@@ -165,7 +165,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
               <p className={sectionText}>{PR}</p>
             </div>
 
-            <div>
+            <div className="break-inside-avoid">
               <p
                 className={`${sectionTitle} text-slate-700 border-slate-200`}
               >
@@ -255,8 +255,8 @@ function ResumePreview({ resumeData, mode = "create" }) {
             </div>
           </div>
 
-          <div className="p-5 lg:p-8 space-y-7">
-            <div>
+              <div className="p-5 lg:p-8 space-y-7">
+            <div className="break-inside-avoid">
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-8 w-1.5 rounded-full bg-gradient-to-b from-violet-600 to-fuchsia-500" />
                 <p className="text-sm font-black uppercase tracking-[0.25em] text-slate-800">
@@ -269,7 +269,7 @@ function ResumePreview({ resumeData, mode = "create" }) {
               </p>
             </div>
 
-            <div>
+            <div className="break-inside-avoid">
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-8 w-1.5 rounded-full bg-gradient-to-b from-violet-600 to-fuchsia-500" />
                 <p className="text-sm font-black uppercase tracking-[0.25em] text-slate-800">

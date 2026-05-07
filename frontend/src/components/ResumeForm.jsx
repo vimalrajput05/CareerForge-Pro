@@ -346,6 +346,10 @@ function ResumeForm({
               📝 Download Resume as Word
             </button>
           )}
+
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-1">
+            💡 For best results, use Chrome browser for PDF download
+          </p>
         </div>
       </div>
     </div>
