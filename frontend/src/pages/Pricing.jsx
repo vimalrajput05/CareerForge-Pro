@@ -122,7 +122,7 @@ const Pricing = ({ setCurrentPage, isPro, upgradeToPro }) => {
   const handleUpgrade = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/stripe/create-checkout-session",
+        `${import.meta.env.VITE_API_URL}/api/stripe/create-checkout-session`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" }

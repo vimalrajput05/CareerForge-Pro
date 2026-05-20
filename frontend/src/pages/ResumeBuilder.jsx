@@ -49,7 +49,7 @@ function ResumeBuilder({ setCurrentPage, mode = "create", isPro }) {
       </html>`;
 
     try {
-      const response = await fetch("http://localhost:5000/api/pdf/generate", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pdf/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ html })
