@@ -5,6 +5,22 @@ An AI-powered full-stack Resume Builder SaaS built with React, Vite, Node.js, Ex
 CareerForge Pro helps users create professional resumes, optimize resumes for ATS systems, generate AI-powered cover letters, analyze job descriptions, and improve existing resumes using AI.
 
 ---
+# 🌐 Live Demo
+
+Live URL: https://careerforge-pro-1-gt0e.onrender.com
+
+---
+
+# 🚀 Deployment
+
+This project is deployed on Render using separate frontend and backend services.
+
+- Frontend deployed as Static Site
+- Backend deployed as Web Service
+- Connected using Environment Variables and CORS
+- Production Ready Deployment
+
+---
 
 # 📁 Project Structure
 
